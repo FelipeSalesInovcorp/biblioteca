@@ -1,21 +1,150 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-2xl font-bold">Editoras</h2>
+        <h2 class="text-2xl font-bold">
+            🏢 Editoras
+        </h2>
     </x-slot>
 
-    <div class="p-6">
-        <p>Página de Listagem de Editoras</p>
+    <div class="py-8">
+        <div class="max-w-5xl mx-auto space-y-4">
+
+            {{-- Filtros / pesquisa --}}
+            <form method="GET" class="flex flex-wrap gap-4 items-end bg-base-100 p-4 rounded-box shadow">
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Pesquisar</span>
+                    </label>
+                    <input type="text"
+                           name="search"
+                           value="{{ request('search') }}"
+                           placeholder="Nome da editora"
+                           class="input input-bordered w-full max-w-xs" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Filtrar
+                </button>
+
+                @if(request()->has('search'))
+                    <a href="{{ route('editoras.index') }}" class="btn btn-ghost">
+                        Limpar
+                    </a>
+                @endif
+            </form>
+
+            {{-- Tabela --}}
+            <div class="bg-base-100 p-4 rounded-box shadow">
+                <div class="overflow-x-auto">
+                    <table class="table table-zebra">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <a href="{{ route('editoras.index', array_merge(request()->all(), [
+                                        'sort' => 'nome',
+                                        'direction' => ($sort === 'nome' && $direction === 'asc') ? 'desc' : 'asc',
+                                    ])) }}">
+                                        Nome
+                                    </a>
+                                </th>
+                                <th>Logótipo</th>
+                                <th>
+                                    <a href="{{ route('editoras.index', array_merge(request()->all(), [
+                                        'sort' => 'created_at',
+                                        'direction' => ($sort === 'created_at' && $direction === 'asc') ? 'desc' : 'asc',
+                                    ])) }}">
+                                        Criado em
+                                    </a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($editoras as $editora)
+                                <tr>
+                                    <td>{{ $editora->nome }}</td>
+                                    <td>
+                                        @if ($editora->logotipo)
+                                            <span class="badge badge-outline">Tem logótipo</span>
+                                        @else
+                                            <span class="badge badge-ghost">Sem logótipo</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ $editora->created_at?->format('d/m/Y') }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center text-base-content/60">
+                                        Nenhuma editora encontrada.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4">
+                    {{ $editoras->links() }}
+                </div>
+            </div>
+
+        </div>
     </div>
 </x-app-layout>
-<footer class="footer footer-center p-4 bg-base-200 text-base-content rounded-b-lg mt-10">
-  <div>
-    <p>© 2024 Biblioteca. Todos os direitos reservados.</p>
-  </div>
-  
-  <nav>
+
+<footer class="footer sm:footer-horizontal bg-blue-700 text-white p-10">
+<aside>
+    <svg
+    width="50"
+    height="50"
+    viewBox="0 0 24 24"
+    xmlns="http://www.w3.org/2000/svg"
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    class="fill-current">
+    <path
+        d="M19 22h-14c-1.657 0-3-1.343-3-3v-14c0-1.657 1.343-3 3-3h14c1.657 0 3 1.343 3 3v14c0 1.657-1.343 3-3 3zm-11-20c-.551 0-1 .449-1 1v18c0 .552.449 1 1 1s1-.448 1-1v-18c0-.551-.449-1-1-1zm6 0c-.551 0-1 .449-1 1v18c0 .552.449 1 1 1s1-.448 1-1v-18c0-.551-.449-1-1-1zm-4 4h-2v2h2v-2zm0 4h-2v2h2v-2zm0 4h-2v2h2v-2zm4-4h-2v2h2v-2zm0 4h-2v2h2v-2zm0 4h-2v2h2v-2zm4-8h-2v2h2v-2zm0 4h-2v2h2v-2zm0 4h-2v2h2v-2z"></path>
+    </svg>
+    <p>
+    Biblioteca Ltd.
+    <br />
+    Providing reliable tech since 1992
+    </p>
+</aside>
+<nav>
+    <h6 class="footer-title">Social</h6>
     <div class="grid grid-flow-col gap-4">
-      <a href="#" class="hover:underline">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="fill-current">
-         <path
-             d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-2.723 0-4.928 2.206-4.928 4.928 0 .39.045.765.127 1.124-4.094-.205-7.725-2.165-10.158-5.144-.424.729-.666 1.577-.666 2.476 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.247-2.228-.616v.062c0 2.385 1.693 4.374 3.946 4.827-.413.112-.849.171-1.296.171-.317 0-.626-.03-.928-.086.627 1.956 2.444 3.379 4.6 3.419-1.68 1.318-3.809 2.105-6.102 2.105-.396 0-.787-.023-1.17-.067 2.179 1.397 4.768 2.213 7.557 2.213 9.054 0 14-7.496 14-13.986 0-.21 0-.423-.015-.633.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"></path>
-         </svg>
+    <a>
+        <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        class="fill-current">
+        <path
+            d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"></path>
+        </svg>
+    </a>
+    <a>
+        <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        class="fill-current">
+        <path
+            d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"></path>
+        </svg>
+    </a>
+    <a>
+        <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        class="fill-current">
+        <path
+            d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path>
+        </svg>
+    </a>
+    </div>
+</nav>
+</footer>
