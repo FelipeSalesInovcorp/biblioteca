@@ -19,7 +19,13 @@ Route::middleware([
     })->name('dashboard');
 
     // Menus principais
-    Route::get('/livros', [LivroController::class, 'index'])->name('livros.index');
-    Route::get('/autores', [AutorController::class, 'index'])->name('autores.index');
-    Route::get('/editoras', [EditoraController::class, 'index'])->name('editoras.index');
+    Route::resource('editoras', EditoraController::class)->except(['show']);
+    Route::resource('autores', AutorController::class)->except(['show']);
+    Route::resource('livros', LivroController::class)->except(['show']);
+
+    // Catálogo de livros
+    Route::get('/catalogo', [LivroController::class, 'catalogo'])->name('catalogo');
+
+    // Para deixar o catálogo público, basta tirar essa rota do group e deixá-la fora do middleware.
+
 });
