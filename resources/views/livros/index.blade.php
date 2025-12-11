@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-2xl font-bold text-blue-900 text-center">
+        <h2 class="text-2xl font-bold">
             📚 Livros
         </h2>
     </x-slot>
@@ -8,100 +8,210 @@
     <div class="py-8">
         <div class="max-w-6xl mx-auto space-y-4">
 
-            {{-- Filtros e pesquisa --}}
-            <form method="GET" class="flex flex-wrap gap-4 items-end bg-base-100 p-4 rounded-box shadow">
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">Pesquisar</span>
-                    </label>
-                    <input type="text" name="search" value="{{ request('search') }}"
-                          placeholder="Nome ou ISBN"
-                          class="input input-bordered w-full max-w-xs" />
-                </div>
+            {{-- Topo: Filtros + botão Novo Livro --}}
+            <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                
+                {{-- FORM DE PESQUISA E FILTROS --}}
+                <form method="GET"
+                      class="flex flex-wrap gap-4 items-end bg-base-100 p-4 rounded-box shadow flex-1">
 
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">Editora</span>
-                    </label>
-                    <select name="editora_id" class="select select-bordered w-full max-w-xs">
-                        <option value="">Todas</option>
-                        @foreach ($editoras as $editora)
-                            <option value="{{ $editora->id }}"
-                                @selected(request('editora_id') == $editora->id)>
-                                {{ $editora->nome }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                    {{-- PESQUISA --}}
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Pesquisar</span>
+                        </label>
+                        <input type="text"
+                               name="search"
+                               value="{{ request('search') }}"
+                               placeholder="Nome ou ISBN"
+                               class="input input-bordered w-full max-w-xs" />
+                    </div>
 
-                <button type="submit" class="btn btn-primary">
-                    Filtrar
-                </button>
+                    {{-- FILTRO POR EDITORA --}}
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Editora</span>
+                        </label>
+                        <select name="editora_id" class="select select-bordered w-full max-w-xs">
+                            <option value="">Todas</option>
+                            @foreach ($editoras as $editora)
+                                <option value="{{ $editora->id }}"
+                                    @selected(request('editora_id') == $editora->id)>
+                                    {{ $editora->nome }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                @if(request()->hasAny(['search','editora_id']))
-                    <a href="{{ route('livros.index') }}" class="btn btn-ghost">
-                        Limpar
+                    <button type="submit" class="btn btn-primary">
+                        Filtrar
+                    </button>
+
+                    @if(request()->has('search') || request()->has('editora_id'))
+                        <a href="{{ route('livros.index') }}" class="btn btn-ghost">
+                            Limpar
+                        </a>
+                    @endif
+                </form>
+
+                {{-- BOTÃO NOVO LIVRO --}}
+                <div class="flex justify-end">
+                    <a href="{{ route('livros.create') }}" class="btn btn-success">
+                        + Novo Livro
                     </a>
-                @endif
-            </form>
+                </div>
+            </div>
 
-            {{-- Tabela --}}
+            {{-- Mensagens de sucesso --}}
+            @if (session('success'))
+                <div class="alert alert-success">
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
+            {{-- TABELA --}}
             <div class="bg-base-100 p-4 rounded-box shadow">
                 <div class="overflow-x-auto">
                     <table class="table table-zebra">
                         <thead>
-                            <tr>
-                                <th>
-                                    <a href="{{ route('livros.index', array_merge(request()->all(), [
-                                        'sort' => 'isbn',
-                                        'direction' => ($sort === 'isbn' && $direction === 'asc') ? 'desc' : 'asc',
-                                    ])) }}">
-                                        ISBN
-                                    </a>
-                                </th>
-                                <th>
-                                    <a href="{{ route('livros.index', array_merge(request()->all(), [
-                                        'sort' => 'nome',
-                                        'direction' => ($sort === 'nome' && $direction === 'asc') ? 'desc' : 'asc',
-                                    ])) }}">
-                                        Nome
-                                    </a>
-                                </th>
-                                <th>Editora</th>
-                                <th>Autores</th>
-                                <th>
-                                    <a href="{{ route('livros.index', array_merge(request()->all(), [
-                                        'sort' => 'preco',
-                                        'direction' => ($sort === 'preco' && $direction === 'asc') ? 'desc' : 'asc',
-                                    ])) }}">
-                                        Preço
-                                    </a>
-                                </th>
-                            </tr>
+                        <tr>
+
+                            {{-- TÍTULO --}}
+                            <th>
+                                <a href="{{ route('livros.index', array_merge(request()->all(), [
+                                    'sort' => 'nome',
+                                    'direction' => ($sort === 'nome' && $direction === 'asc') ? 'desc' : 'asc',
+                                ])) }}">
+                                    Nome
+                                </a>
+                            </th>
+
+                            {{-- CAPA --}}
+                            <th>Capa</th>
+
+                            {{-- ISBN --}}
+                            <th>
+                                <a href="{{ route('livros.index', array_merge(request()->all(), [
+                                    'sort' => 'isbn',
+                                    'direction' => ($sort === 'isbn' && $direction === 'asc') ? 'desc' : 'asc',
+                                ])) }}">
+                                    ISBN
+                                </a>
+                            </th>
+
+                            {{-- EDITORA --}}
+                            <th>Editora</th>
+
+                            {{-- AUTORES --}}
+                            <th>Autores</th>
+
+                            {{-- PREÇO --}}
+                            <th>
+                                <a href="{{ route('livros.index', array_merge(request()->all(), [
+                                    'sort' => 'preco',
+                                    'direction' => ($sort === 'preco' && $direction === 'asc') ? 'desc' : 'asc',
+                                ])) }}">
+                                    Preço
+                                </a>
+                            </th>
+
+                            {{-- DATA --}}
+                            <th>
+                                <a href="{{ route('livros.index', array_merge(request()->all(), [
+                                    'sort' => 'created_at',
+                                    'direction' => ($sort === 'created_at' && $direction === 'asc') ? 'desc' : 'asc',
+                                ])) }}">
+                                    Criado em
+                                </a>
+                            </th>
+
+                            {{-- AÇÕES --}}
+                            <th class="text-right">Ações</th>
+                        </tr>
                         </thead>
+
                         <tbody>
-                            @forelse ($livros as $livro)
-                                <tr>
-                                    <td>{{ $livro->isbn }}</td>
-                                    <td>{{ $livro->nome }}</td>
-                                    <td>{{ $livro->editora?->nome }}</td>
-                                    <td>{{ $livro->autores->pluck('nome')->join(', ') }}</td>
-                                    <td>{{ number_format($livro->preco, 2, ',', '.') }} €</td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="5" class="text-center text-base-content/60">
-                                        Nenhum livro encontrado.
-                                    </td>
-                                </tr>
-                            @endforelse
+                        @forelse ($livros as $livro)
+                            <tr>
+                                {{-- Nome --}}
+                                <td>{{ $livro->nome }}</td>
+
+                                {{-- Capa --}}
+                                <td>
+                                    @if ($livro->imagem_capa)
+                                        <div class="avatar">
+                                            <div class="w-12 rounded">
+                                                <img src="{{ asset('storage/'.$livro->imagem_capa) }}"
+                                                    alt="Capa {{ $livro->nome }}">
+                                            </div>
+                                        </div>
+                                    @else
+                                        <span class="badge badge-ghost">Sem capa</span>
+                                    @endif
+                                </td>
+
+                                {{-- ISBN --}}
+                                <td>{{ $livro->isbn }}</td>
+
+                                {{-- Editora --}}
+                                <td>{{ $livro->editora->nome ?? '—' }}</td>
+
+                                {{-- Autores --}}
+                                <td>
+                                    @if ($livro->autores->count())
+                                        <ul class="list-disc ml-4">
+                                            @foreach ($livro->autores as $autor)
+                                                <li>{{ $autor->nome }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <span class="badge badge-ghost">Sem autores</span>
+                                    @endif
+                                </td>
+
+                                {{-- Preço --}}
+                                <td>{{ number_format($livro->preco, 2, ',', '.') }} €</td>
+
+                                {{-- Criado em --}}
+                                <td>{{ $livro->created_at?->format('d/m/Y') }}</td>
+
+                                {{-- Ações --}}
+                                <td>
+                                    <div class="flex justify-end gap-2">
+                                        <a href="{{ route('livros.edit', $livro) }}"
+                                        class="btn btn-sm btn-outline">
+                                            Editar
+                                        </a>
+
+                                        <form method="POST"
+                                            action="{{ route('livros.destroy', $livro) }}"
+                                            onsubmit="return confirm('Tem a certeza que deseja apagar este livro?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-error">
+                                                Apagar
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center text-base-content/60">
+                                    Nenhum livro encontrado.
+                                </td>
+                            </tr>
+                        @endforelse
                         </tbody>
+
                     </table>
                 </div>
 
                 <div class="mt-4">
                     {{ $livros->links() }}
                 </div>
+
             </div>
 
         </div>

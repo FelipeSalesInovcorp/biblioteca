@@ -8,29 +8,46 @@
     <div class="py-8">
         <div class="max-w-5xl mx-auto space-y-4">
 
-            {{-- Filtros / pesquisa --}}
-            <form method="GET" class="flex flex-wrap gap-4 items-end bg-base-100 p-4 rounded-box shadow">
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">Pesquisar</span>
-                    </label>
-                    <input type="text"
-                           name="search"
-                           value="{{ request('search') }}"
-                           placeholder="Nome da editora"
-                           class="input input-bordered w-full max-w-xs" />
-                </div>
+            {{-- Topo: filtros + botão Nova Editora --}}
+            <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                {{-- Filtros / pesquisa --}}
+                <form method="GET" class="flex flex-wrap gap-4 items-end bg-base-100 p-4 rounded-box shadow flex-1">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Pesquisar</span>
+                        </label>
+                        <input type="text"
+                            name="search"
+                            value="{{ request('search') }}"
+                            placeholder="Nome da editora"
+                            class="input input-bordered w-full max-w-xs" />
+                    </div>
 
-                <button type="submit" class="btn btn-primary">
-                    Filtrar
-                </button>
+                    <button type="submit" class="btn btn-primary">
+                        Filtrar
+                    </button>
 
-                @if(request()->has('search'))
-                    <a href="{{ route('editoras.index') }}" class="btn btn-ghost">
-                        Limpar
+                    @if(request()->has('search'))
+                        <a href="{{ route('editoras.index') }}" class="btn btn-ghost">
+                            Limpar
+                        </a>
+                    @endif
+                </form>
+
+                {{-- Botão Nova Editora --}}
+                <div class="flex justify-end">
+                    <a href="{{ route('editoras.create') }}" class="btn btn-success">
+                        + Nova Editora
                     </a>
-                @endif
-            </form>
+                </div>
+            </div>
+
+            {{-- Mensagens de sucesso --}}
+            @if (session('success'))
+                <div class="alert alert-success">
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
 
             {{-- Tabela --}}
             <div class="bg-base-100 p-4 rounded-box shadow">
@@ -55,6 +72,7 @@
                                         Criado em
                                     </a>
                                 </th>
+                                <th class="text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -63,16 +81,38 @@
                                     <td>{{ $editora->nome }}</td>
                                     <td>
                                         @if ($editora->logotipo)
-                                            <span class="badge badge-outline">Tem logótipo</span>
+                                            <div class="avatar">
+                                                <div class="w-12 rounded">
+                                                    <img src="{{ asset('storage/'.$editora->logotipo) }}"
+                                                         alt="Logótipo {{ $editora->nome }}">
+                                                </div>
+                                            </div>
                                         @else
                                             <span class="badge badge-ghost">Sem logótipo</span>
                                         @endif
                                     </td>
                                     <td>{{ $editora->created_at?->format('d/m/Y') }}</td>
+                                    <td>
+                                        <div class="flex justify-end gap-2">
+                                            <a href="{{ route('editoras.edit', $editora) }}" class="btn btn-sm btn-outline">
+                                                Editar
+                                            </a>
+
+                                            <form method="POST"
+                                                action="{{ route('editoras.destroy', $editora) }}"
+                                                onsubmit="return confirm('Tem a certeza que pretende apagar esta editora?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-error">
+                                                    Apagar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="text-center text-base-content/60">
+                                    <td colspan="4" class="text-center text-base-content/60">
                                         Nenhuma editora encontrada.
                                     </td>
                                 </tr>
@@ -89,6 +129,7 @@
         </div>
     </div>
 </x-app-layout>
+
 
 <footer class="footer sm:footer-horizontal bg-blue-700 text-white p-10">
 <aside>

@@ -4,21 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Autor;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class AutorController extends Controller
 {
-    // Controller methods will be defined here
-    
     public function index(Request $request)
     {
         $query = Autor::query();
 
-        // Pesquisa por nome
         if ($search = $request->input('search')) {
             $query->where('nome', 'like', "%{$search}%");
         }
 
-        // Ordenação
         $sort = $request->input('sort', 'nome');
         $direction = $request->input('direction', 'asc');
 
@@ -29,11 +26,76 @@ class AutorController extends Controller
 
         $query->orderBy($sort, $direction);
 
-        $autores = $query->paginate(10)->withQueryString();
+        $autores = $query->paginate(6)->withQueryString();
 
         return view('autores.index', compact('autores', 'sort', 'direction'));
-        
     }
-    
 
+    public function create()
+    {
+        return view('autores.create');
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'nome' => ['required', 'string', 'max:255'],
+            'foto' => ['nullable', 'image', 'max:2048'], // 2MB
+        ]);
+
+        if ($request->hasFile('foto')) {
+            $data['foto'] = $request->file('foto')
+                            ->store('autores', 'public');
+        }
+
+        Autor::create($data);
+
+        return redirect()
+            ->route('autores.index')
+            ->with('success', 'Autor criado com sucesso!');
+    }
+
+    public function edit(Autor $autore)
+    {
+        return view('autores.edit', ['autor' => $autore]);
+    }
+
+    public function update(Request $request, Autor $autore)
+    {
+        $data = $request->validate([
+            'nome' => ['required', 'string', 'max:255'],
+            'foto' => ['nullable', 'image', 'max:2048'],
+        ]);
+
+        if ($request->hasFile('foto')) {
+
+            // Se tinha uma foto antiga → apaga
+            if ($autore->foto) {
+                Storage::disk('public')->delete($autore->foto);
+            }
+
+            $data['foto'] = $request->file('foto')
+                                    ->store('autores', 'public');
+        }
+
+        $autore->update($data);
+
+        return redirect()
+            ->route('autores.index')
+            ->with('success', 'Autor atualizado com sucesso!');
+    }
+
+    public function destroy(Autor $autore)
+    {
+        if ($autore->foto) {
+            Storage::disk('public')->delete($autore->foto);
+        }
+
+        $autore->delete();
+
+        return redirect()
+            ->route('autores.index')
+            ->with('success', 'Autor removido com sucesso!');
+    }
 }
+

@@ -8,29 +8,46 @@
     <div class="py-8">
         <div class="max-w-5xl mx-auto space-y-4">
 
-            {{-- Filtros / pesquisa --}}
-            <form method="GET" class="flex flex-wrap gap-4 items-end bg-base-100 p-4 rounded-box shadow">
-                <div class="form-control">
-                    <label class="label">
-                        <span class="label-text">Pesquisar</span>
-                    </label>
-                    <input type="text"
-                          name="search"
-                          value="{{ request('search') }}"
-                          placeholder="Nome do autor"
-                          class="input input-bordered w-full max-w-xs" />
-                </div>
+            {{-- Topo: filtros + botão Novo Autor --}}
+            <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+                {{-- Filtros / pesquisa --}}
+                <form method="GET" class="flex flex-wrap gap-4 items-end bg-base-100 p-4 rounded-box shadow flex-1">
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Pesquisar</span>
+                        </label>
+                        <input type="text"
+                               name="search"
+                               value="{{ request('search') }}"
+                               placeholder="Nome do autor"
+                               class="input input-bordered w-full max-w-xs" />
+                    </div>
 
-                <button type="submit" class="btn btn-primary">
-                    Filtrar
-                </button>
+                    <button type="submit" class="btn btn-primary">
+                        Filtrar
+                    </button>
 
-                @if(request()->has('search'))
-                    <a href="{{ route('autores.index') }}" class="btn btn-ghost">
-                        Limpar
+                    @if(request()->has('search'))
+                        <a href="{{ route('autores.index') }}" class="btn btn-ghost">
+                            Limpar
+                        </a>
+                    @endif
+                </form>
+
+                {{-- Botão Novo Autor --}}
+                <div class="flex justify-end">
+                    <a href="{{ route('autores.create') }}" class="btn btn-success">
+                        + Novo Autor
                     </a>
-                @endif
-            </form>
+                </div>
+            </div>
+
+            {{-- Mensagens de sucesso --}}
+            @if (session('success'))
+                <div class="alert alert-success">
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
 
             {{-- Tabela --}}
             <div class="bg-base-100 p-4 rounded-box shadow">
@@ -46,6 +63,7 @@
                                         Nome
                                     </a>
                                 </th>
+                                <th>Foto</th>
                                 <th>
                                     <a href="{{ route('autores.index', array_merge(request()->all(), [
                                         'sort' => 'created_at',
@@ -54,26 +72,48 @@
                                         Criado em
                                     </a>
                                 </th>
-                                <th>Foto</th>
+                                <th class="text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($autores as $autor)
                                 <tr>
                                     <td>{{ $autor->nome }}</td>
-                                    <td>{{ $autor->created_at?->format('d/m/Y') }}</td>
                                     <td>
                                         @if ($autor->foto)
-                                            {{-- Por enquanto só mostramos que existe --}}
-                                            <span class="badge badge-outline">Tem foto</span>
+                                            <div class="avatar">
+                                                <div class="w-12 rounded-full">
+                                                    <img src="{{ asset('storage/'.$autor->foto) }}"
+                                                         alt="Foto {{ $autor->nome }}">
+                                                </div>
+                                            </div>
                                         @else
                                             <span class="badge badge-ghost">Sem foto</span>
                                         @endif
                                     </td>
+                                    <td>{{ $autor->created_at?->format('d/m/Y') }}</td>
+                                    <td>
+                                        <div class="flex justify-end gap-2">
+                                            <a href="{{ route('autores.edit', $autor) }}"
+                                               class="btn btn-sm btn-outline">
+                                                Editar
+                                            </a>
+
+                                            <form method="POST"
+                                                  action="{{ route('autores.destroy', $autor) }}"
+                                                  onsubmit="return confirm('Tem a certeza que pretende apagar este autor?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-error">
+                                                    Apagar
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="3" class="text-center text-base-content/60">
+                                    <td colspan="4" class="text-center text-base-content/60">
                                         Nenhum autor encontrado.
                                     </td>
                                 </tr>
@@ -90,6 +130,7 @@
         </div>
     </div>
 </x-app-layout>
+
 
 <footer class="footer sm:footer-horizontal bg-blue-700 text-white p-10">
 <aside>

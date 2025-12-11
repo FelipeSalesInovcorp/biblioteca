@@ -1,51 +1,60 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-3xl font-bold text-blue-900 text-center">
-            {{ __('Dashboard - Biblioteca') }}
-        </h2>
+        <h2 class="text-2xl font-bold">Editar Autor</h2>
     </x-slot>
 
     <div class="py-8">
-        <div class="max-w-5xl mx-auto">
-            <div class="grid gap-6 md:grid-cols-3">
+        <div class="max-w-xl mx-auto bg-base-100 p-6 rounded-box shadow">
 
-                <a href="{{ route('livros.index') }}" class="card bg-base-100 shadow hover:shadow-lg transition">
-                    <div class="card-body">
-                        <h2 class="card-title">📚 Livros</h2>
-                        <p>Gestão de títulos, ISBN, autores, editoras, preço, capa, etc.</p>
-                        <div class="card-actions justify-end">
-                            <span class="btn btn-primary btn-sm">Aceder</span>
+            <form method="POST"
+                action="{{ route('autores.update', $autor) }}"
+                enctype="multipart/form-data"
+                class="space-y-4">
+
+                @csrf
+                @method('PUT')
+
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Nome</span>
+                    </label>
+                    <input type="text" name="nome"
+                        value="{{ old('nome', $autor->nome) }}"
+                        class="input input-bordered w-full" required>
+                    @error('nome')
+                        <span class="text-error text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div>
+                    <span class="label-text">Foto Atual</span>
+                    <div class="avatar mt-2">
+                        <div class="w-16 rounded-full">
+                            @if($autor->foto)
+                                <img src="{{ asset('storage/'.$autor->foto) }}">
+                            @else
+                                <img src="https://via.placeholder.com/150?text=Sem+Foto">
+                            @endif
                         </div>
                     </div>
-                </a>
+                </div>
 
-                <a href="{{ route('autores.index') }}" class="card bg-base-100 shadow hover:shadow-lg transition">
-                    <div class="card-body">
-                        <h2 class="card-title">👤 Autores</h2>
-                        <p>Lista de autores e associação com os seus livros.</p>
-                        <div class="card-actions justify-end">
-                            <span class="btn btn-primary btn-sm">Aceder</span>
-                        </div>
-                    </div>
-                </a>
+                <div class="form-control">
+                    <label class="label">
+                        <span class="label-text">Nova Foto</span>
+                    </label>
+                    <input type="file" name="foto" class="file-input file-input-bordered w-full max-w-xs">
+                    @error('foto')
+                        <span class="text-error text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
 
-                <a href="{{ route('editoras.index') }}" class="card bg-base-100 shadow hover:shadow-lg transition">
-                    <div class="card-body">
-                        <h2 class="card-title">🏢 Editoras</h2>
-                        <p>Gestão das editoras, nomes e logótipos.</p>
-                        <div class="card-actions justify-end">
-                            <span class="btn btn-primary btn-sm">Aceder</span>
-                        </div>
-                    </div>
-                </a>
+                <div class="flex justify-end gap-2">
+                    <a href="{{ route('autores.index') }}" class="btn btn-ghost">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Atualizar</button>
+                </div>
 
-            </div>
-            
-            <a href="{{ route('catalogo') }}" class="btn btn-outline btn-sm">
-                Ver catálogo de livros
-            </a>
-
-
+            </form>
         </div>
     </div>
 </x-app-layout>
@@ -108,4 +117,3 @@
     </div>
 </nav>
 </footer>
-
