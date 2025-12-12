@@ -7,6 +7,7 @@ use App\Models\Editora;
 use App\Models\Autor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LivroController extends Controller
 {
@@ -171,5 +172,47 @@ class LivroController extends Controller
             ->route('livros.index')
             ->with('success', 'Livro removido com sucesso!');
     }
-}
+    
 
+    public function exportCsv(): StreamedResponse
+    {
+        $fileName = 'livros.csv';
+
+        $headers = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.$fileName.'"',
+        ];
+
+        $callback = function () {
+            $handle = fopen('php://output', 'w');
+
+            // BOM para Excel reconhecer UTF-8
+            fprintf($handle, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            // Cabeçalhos
+            fputcsv($handle, ['ISBN', 'Nome', 'Editora', 'Autores', 'Preço'], ';');
+
+            Livro::with(['editora', 'autores'])
+                ->orderBy('nome')
+                ->chunk(200, function ($livros) use ($handle) {
+                    foreach ($livros as $livro) {
+                        $autores = $livro->autores->pluck('nome')->join(', ');
+
+                        fputcsv($handle, [
+                            $livro->isbn,
+                            $livro->nome,
+                            optional($livro->editora)->nome,
+                            $autores,
+                            number_format($livro->preco, 2, ',', ''),
+                        ], ';');
+                    }
+                });
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+
+}

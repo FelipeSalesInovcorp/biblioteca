@@ -1,50 +1,100 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-3xl font-bold text-blue-900 text-center">
-            {{ __('Dashboard - Biblioteca') }}
+        <h2 class="font-semibold text-3xl text-center text-base-content leading-tight">
+            Dashboard - Biblioteca
         </h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-5xl mx-auto">
+    <div class="py-10">
+        <div class="max-w-6xl mx-auto px-4 space-y-8">
+
+            
+    {{-- CARROSSEL DINÂMICO COM CAPAS REAIS --}}
+@if($livros->count() > 0)
+<div class="carousel w-full rounded-box shadow-lg overflow-hidden">
+
+    @foreach($livros as $index => $livro)
+        <div id="slide{{ $index+1 }}" class="carousel-item relative w-full">
+            <img src="{{ asset('storage/' . $livro->imagem_capa) }}"
+                class="w-full h-64 md:h-80 object-contain bg-base-200"
+                alt="Capa do livro {{ $livro->nome }}">
+            
+            <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+                <a href="#slide{{ $index === 0 ? $livros->count() : $index }}" class="btn btn-circle">❮</a>
+                <a href="#slide{{ $index+1 == $livros->count() ? 1 : $index+2 }}" class="btn btn-circle">❯</a>
+            </div>
+        </div>
+    @endforeach
+
+</div>
+@endif
+
+
+
+            {{-- Grelha de cards principais --}}
             <div class="grid gap-6 md:grid-cols-3">
 
-                <a href="{{ route('livros.index') }}" class="card bg-base-100 shadow hover:shadow-lg transition">
+                {{-- CARD LIVROS --}}
+                <div class="card bg-base-100 shadow-lg border border-base-200">
                     <div class="card-body">
-                        <h2 class="card-title">📚 Livros</h2>
-                        <p>Gestão de títulos, ISBN, autores, editoras, preço, capa, etc.</p>
-                        <div class="card-actions justify-end">
-                            <span class="btn btn-primary btn-sm">Aceder</span>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xl">📚</span>
+                            <h3 class="card-title text-lg">Livros</h3>
                         </div>
-                    </div>
-                </a>
+                        <p class="text-sm text-base-content/70">
+                            Gestão de títulos, ISBN, autores, editoras, preço, capa, etc.
+                        </p>
 
-                <a href="{{ route('autores.index') }}" class="card bg-base-100 shadow hover:shadow-lg transition">
-                    <div class="card-body">
-                        <h2 class="card-title">👤 Autores</h2>
-                        <p>Lista de autores e associação com os seus livros.</p>
-                        <div class="card-actions justify-end">
-                            <span class="btn btn-primary btn-sm">Aceder</span>
+                        <div class="card-actions justify-end mt-4 gap-2">
+                            <a href="{{ route('livros.index') }}" class="btn btn-primary btn-sm">
+                                Gerir livros
+                            </a>
+                            <a href="{{ route('catalogo') }}" class="btn btn-outline btn-sm btn-success">
+                                Ver catálogo
+                            </a>
                         </div>
                     </div>
-                </a>
+                </div>
 
-                <a href="{{ route('editoras.index') }}" class="card bg-base-100 shadow hover:shadow-lg transition">
+                {{-- CARD AUTORES --}}
+                <div class="card bg-base-100 shadow-lg border border-base-200">
                     <div class="card-body">
-                        <h2 class="card-title">🏢 Editoras</h2>
-                        <p>Gestão das editoras, nomes e logótipos.</p>
-                        <div class="card-actions justify-end">
-                            <span class="btn btn-primary btn-sm">Aceder</span>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xl">👤</span>
+                            <h3 class="card-title text-lg">Autores</h3>
+                        </div>
+                        <p class="text-sm text-base-content/70">
+                            Lista de autores e associação com os seus livros.
+                        </p>
+
+                        <div class="card-actions justify-end mt-4">
+                            <a href="{{ route('autores.index') }}" class="btn btn-primary btn-sm">
+                                Aceder
+                            </a>
                         </div>
                     </div>
-                </a>
+                </div>
+
+                {{-- CARD EDITORAS --}}
+                <div class="card bg-base-100 shadow-lg border border-base-200">
+                    <div class="card-body">
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-xl">🏢</span>
+                            <h3 class="card-title text-lg">Editoras</h3>
+                        </div>
+                        <p class="text-sm text-base-content/70">
+                            Gestão das editoras, nomes e logótipos.
+                        </p>
+
+                        <div class="card-actions justify-end mt-4">
+                            <a href="{{ route('editoras.index') }}" class="btn btn-primary btn-sm">
+                                Aceder
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
             </div>
-            
-            <a href="{{ route('catalogo') }}" class="btn btn-outline btn-sm">
-                Ver catálogo de livros
-            </a>
-
 
         </div>
     </div>
