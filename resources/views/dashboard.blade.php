@@ -1,8 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-3xl text-center text-base-content leading-tight">
-            Dashboard - Biblioteca
+        <h2 class="font-semibold text-3xl text-center  text-base-content leading-tight text-blue-800">
+            📚 Painel da Biblioteca
         </h2>
+        <p class="text-sm text-base-content/70 mt-1 text-center">
+            Gestão rápida de livros, autores, editoras e catálogo.
+        </p>
     </x-slot>
 
     <div class="py-10">
@@ -10,11 +13,12 @@
 
             
     {{-- CARROSSEL DINÂMICO COM CAPAS REAIS --}}
-@if($livros->count() > 0)
-<div class="carousel w-full rounded-box shadow-lg overflow-hidden">
+    @if($livros->count() > 0)
+    <div class="carousel w-full rounded-box shadow-lg overflow-hidden">
 
     @foreach($livros as $index => $livro)
         <div id="slide{{ $index+1 }}" class="carousel-item relative w-full">
+        {{--<div id="carouselLivros" class="carousel w-full rounded-box shadow-lg overflow-hidden">--}}
             <img src="{{ asset('storage/' . $livro->imagem_capa) }}"
                 class="w-full h-64 md:h-80 object-contain bg-base-200"
                 alt="Capa do livro {{ $livro->nome }}">
@@ -26,8 +30,8 @@
         </div>
     @endforeach
 
-</div>
-@endif
+    </div>
+    @endif
 
 
 
@@ -100,7 +104,7 @@
     </div>
 </x-app-layout>
 
-<footer class="footer sm:footer-horizontal bg-blue-700 text-white p-10">
+<footer class="footer sm:footer-horizontal bg-blue-600 text-white p-10">
 <aside>
     <svg
     width="50"
@@ -116,7 +120,7 @@
     <p>
     Biblioteca Ltd.
     <br />
-    Providing reliable tech since 1992
+    Onde o conhecimento ganha vida.
     </p>
 </aside>
 <nav>
@@ -158,4 +162,5 @@
     </div>
 </nav>
 </footer>
+
 

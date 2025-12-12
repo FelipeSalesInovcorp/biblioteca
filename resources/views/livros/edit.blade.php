@@ -1,14 +1,14 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-2xl font-bold">✏️ Editar Livro</h2>
+        <h2 class="text-2xl font-bold text-center text-base-content leading-tight text-blue-800">✏️ Editar Livro</h2>
     </x-slot>
 
     <div class="py-8">
         <div class="max-w-3xl mx-auto bg-base-100 p-6 rounded-box shadow">
             <form method="POST"
-                  action="{{ route('livros.update', $livro) }}"
-                  enctype="multipart/form-data"
-                  class="space-y-4">
+                action="{{ route('livros.update', $livro) }}"
+                enctype="multipart/form-data"
+                class="space-y-4">
                 @csrf
                 @method('PUT')
 
@@ -156,7 +156,7 @@
     <p>
     Biblioteca Ltd.
     <br />
-    Providing reliable tech since 1992
+    Onde o conhecimento ganha vida.
     </p>
 </aside>
 <nav>
