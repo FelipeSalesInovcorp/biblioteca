@@ -12,11 +12,20 @@
 <body class="min-h-screen bg-base-200">
 
     {{-- NAVBAR --}}
-    <div class="navbar bg-base-100 shadow">
+    <div class="navbar bg-base-100 shadow px-4 min-h-16">
         <div class="flex-1">
-            <a href="{{ url('/') }}" class="btn btn-ghost text-xl font-bold">
+            <!--<a href="{{ url('/') }}" class="btn btn-ghost text-xl font-bold">
                 📚 Biblioteca
+            </a>-->
+            <a href="{{ url('/') }}" class="flex items-center gap-3">
+            
+            <!--<img src="{{ asset('img/logo-biblioteca.png') }}" class="h-16 w-auto">-->
+
+            <img src="{{ asset('img/logo-biblioteca.png') }}" class="h-16 md:h-18 w-auto object-contain">
+
             </a>
+
+
         </div>
 
         <div class="flex-none gap-2">
@@ -25,7 +34,7 @@
                     Dashboard
                 </a>
             @else
-                <a href="{{ route('login') }}" class="btn btn-ghost btn-sm">
+                <a href="{{ route('login') }}" class="btn btn-outline btn-sm">
                     Entrar
                 </a>
                 <a href="{{ route('register') }}" class="btn btn-primary btn-sm">
@@ -56,7 +65,7 @@
                                 Aceder ao sistema
                             </a>
                         @else
-                            <a href="{{ route('register') }}" class="btn btn-primary">
+                            <a href="{{ route('register') }}" class="btn btn-primary text-white hover:brightness-110">
                                 Começar agora
                             </a>
                             <a href="{{ route('login') }}" class="btn btn-outline">
@@ -99,15 +108,9 @@
     </main>
 
     {{-- FOOTER --}}
-    {{--<footer class="footer footer-center p-4 text-base-content/60">
-        <aside>
-            <p>© {{ date('Y') }} Biblioteca · Desenvolvido em Laravel + Jetstream + DaisyUI</p>
-        </aside>
-    </footer>
-    --}}
 
     {{--<footer class="footer sm:footer-horizontal bg-neutral text-neutral-content p-10">--}}
-    <footer class="footer sm:footer-horizontal bg-blue-700 text-white p-10">
+    <footer class="footer sm:footer-horizontal bg-blue-600 text-white p-10">
 <aside>
     <svg
     width="50"
@@ -123,7 +126,7 @@
     <p>
     Biblioteca Ltd.
     <br />
-    Providing reliable tech since 1992
+    Onde o conhecimento ganha vida.
     </p>
 </aside>
 <nav>

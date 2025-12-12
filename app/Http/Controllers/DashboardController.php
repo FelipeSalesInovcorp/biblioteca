@@ -13,7 +13,8 @@ class DashboardController extends Controller
     // Busca os 4 livros mais recentes com capa
     $livros = \App\Models\Livro::whereNotNull('imagem_capa')
                 ->latest()
-                ->take(4)
+                //->take(4)
+                ->orderByDesc('created_at')
                 ->get();
 
     return view('dashboard', compact('livros'));

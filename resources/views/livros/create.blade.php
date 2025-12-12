@@ -137,7 +137,7 @@
     <p>
     Biblioteca Ltd.
     <br />
-    Providing reliable tech since 1992
+    Onde o conhecimento ganha vida.
     </p>
 </aside>
 <nav>

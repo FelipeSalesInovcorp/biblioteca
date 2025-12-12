@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-2xl font-bold">
+        <h2 class="text-2xl font-bold text-center text-base-content leading-tight text-blue-800">
             👤 Autores
         </h2>
     </x-slot>
@@ -148,7 +148,7 @@
     <p>
     Biblioteca Ltd.
     <br />
-    Providing reliable tech since 1992
+    Onde o conhecimento ganha vida.
     </p>
 </aside>
 <nav>
