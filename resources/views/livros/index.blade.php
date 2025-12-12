@@ -13,7 +13,7 @@
                 
                 {{-- FORM DE PESQUISA E FILTROS --}}
                 <form method="GET"
-                      class="flex flex-wrap gap-4 items-end bg-base-100 p-4 rounded-box shadow flex-1">
+                    class="flex flex-wrap gap-4 items-end bg-base-100 p-4 rounded-box shadow flex-1">
 
                     {{-- PESQUISA --}}
                     <div class="form-control">
@@ -21,10 +21,10 @@
                             <span class="label-text">Pesquisar</span>
                         </label>
                         <input type="text"
-                               name="search"
-                               value="{{ request('search') }}"
-                               placeholder="Nome ou ISBN"
-                               class="input input-bordered w-full max-w-xs" />
+                            name="search"
+                            value="{{ request('search') }}"
+                            placeholder="Nome ou ISBN"
+                            class="input input-bordered w-full max-w-xs" />
                     </div>
 
                     {{-- FILTRO POR EDITORA --}}
@@ -54,8 +54,12 @@
                     @endif
                 </form>
 
-                {{-- BOTÃO NOVO LIVRO --}}
-                <div class="flex justify-end">
+                {{-- BOTÕES: Exportar CSV + NOVO LIVRO --}}
+                <div class="flex justify-end gap-2">
+                    <a href="{{ route('livros.export') }}" class="btn  btn-primary">
+                        Exportar para Excel
+                    </a>
+
                     <a href="{{ route('livros.create') }}" class="btn btn-success">
                         + Novo Livro
                     </a>
