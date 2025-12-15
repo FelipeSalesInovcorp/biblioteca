@@ -18,8 +18,8 @@
                             <span class="label-text">ISBN</span>
                         </label>
                         <input type="text" name="isbn"
-                               value="{{ old('isbn', $livro->isbn) }}"
-                               class="input input-bordered w-full" required>
+                            value="{{ old('isbn', $livro->isbn) }}"
+                            class="input input-bordered w-full" required>
                         @error('isbn')
                             <span class="text-error text-sm">{{ $message }}</span>
                         @enderror
@@ -108,7 +108,7 @@
                             <span class="label-text">Nova imagem da capa</span>
                         </label>
                         <input type="file" name="imagem_capa"
-                               class="file-input file-input-bordered w-full max-w-xs">
+                            class="file-input file-input-bordered w-full max-w-xs">
                         @error('imagem_capa')
                             <span class="text-error text-sm">{{ $message }}</span>
                         @enderror
