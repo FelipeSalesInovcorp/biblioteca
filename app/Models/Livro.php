@@ -25,6 +25,7 @@ class Livro extends Model
     protected $casts = [
         'bibliografia' => 'encrypted',
         'imagem_capa' => 'encrypted',
+        'preco'        => 'decimal:2',
     ];
     
     // Relação com editora
