@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Editora;
 use Illuminate\Http\Request;
+use App\Http\Requests\EditoraStoreRequest;
+use App\Http\Requests\EditoraUpdateRequest;
+use App\Actions\Editoras\CreateEditora;
+use App\Actions\Editoras\UpdateEditora;
 use Illuminate\Support\Facades\Storage;
 
 class EditoraController extends Controller
@@ -35,8 +39,9 @@ class EditoraController extends Controller
     {
         return view('editoras.create');
     }
-
-    public function store(Request $request)
+    
+    // Utilizando um método de armazenamento simplificado sem a ação CreateEditora.
+    /*public function store(Request $request)
     {
         $data = $request->validate([
             'nome'     => ['required', 'string', 'max:255'],
@@ -53,14 +58,23 @@ class EditoraController extends Controller
         return redirect()
             ->route('editoras.index')
             ->with('success', 'Editora criada com sucesso!');
+    }*/
+
+    public function store(EditoraStoreRequest $request, CreateEditora $action)
+    {
+        $action->execute($request->validated());
+
+        return redirect()->route('editoras.index')
+        ->with('success', 'Editora criada com sucesso!');
     }
 
     public function edit(Editora $editora)
     {
         return view('editoras.edit', compact('editora'));
     }
-
-    public function update(Request $request, Editora $editora)
+    
+    // Utilizando um método de atualização simplificado sem a ação UpdateEditora.
+    /*public function update(Request $request, Editora $editora)
     {
         $data = $request->validate([
             'nome'     => ['required', 'string', 'max:255'],
@@ -82,6 +96,14 @@ class EditoraController extends Controller
         return redirect()
             ->route('editoras.index')
             ->with('success', 'Editora atualizada com sucesso!');
+    }*/
+
+    public function update(EditoraUpdateRequest $request, Editora $editora, UpdateEditora $action)
+    {
+        $action->execute($editora, $request->validated());
+
+        return redirect()->route('editoras.index')
+        ->with('success', 'Editora atualizada com sucesso!');
     }
 
     public function destroy(Editora $editora)
