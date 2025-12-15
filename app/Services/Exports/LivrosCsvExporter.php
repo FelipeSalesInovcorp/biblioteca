@@ -34,7 +34,7 @@ class LivrosCsvExporter
                             $livro->nome,
                             optional($livro->editora)->nome,
                             $autores,
-                            number_format((float)$livro->preco, 2, ',', ''),
+                            $livro->preco_formatado_sem_simbolo,
                         ], ';');
                     }
                 });

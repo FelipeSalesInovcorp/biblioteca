@@ -38,5 +38,17 @@ class Livro extends Model
     {
         return $this->belongsToMany(Autor::class, 'autor_livro');
     }
+
+    // Preço formatado (para usar na view)
+    public function getPrecoFormatadoAttribute(): string
+    {
+        return number_format((float) $this->preco, 2, ',', '.') . ' €';
+    }
+
+    // Preço formatado sem símbolo (útil para CSV ou inputs)
+    public function getPrecoFormatadoSemSimboloAttribute(): string
+    {
+        return number_format((float) $this->preco, 2, ',', '.');
+    }
     
 }

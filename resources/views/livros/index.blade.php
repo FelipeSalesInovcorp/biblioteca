@@ -174,7 +174,8 @@
                                 </td>
 
                                 {{-- Preço --}}
-                                <td>{{ number_format($livro->preco, 2, ',', '.') }} €</td>
+                                <!--<td>{{ number_format($livro->preco, 2, ',', '.') }} €</td>-->
+                                <td> {{ $livro->preco_formatado }}</td>
 
                                 {{-- Criado em --}}
                                 <td>{{ $livro->created_at?->format('d/m/Y') }}</td>
