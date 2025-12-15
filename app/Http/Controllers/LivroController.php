@@ -6,6 +6,8 @@ use App\Models\Livro;
 use App\Models\Editora;
 use App\Models\Autor;
 use Illuminate\Http\Request;
+use App\Http\Requests\LivroStoreRequest;
+use App\Http\Requests\LivroUpdateRequest;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -80,7 +82,7 @@ class LivroController extends Controller
         return view('livros.create', compact('editoras', 'autores'));
     }
 
-    public function store(Request $request)
+    /*public function store(Request $request)
     {
         $data = $request->validate([
             'isbn'        => ['required', 'string', 'max:255', 'unique:livros,isbn'],
@@ -112,6 +114,32 @@ class LivroController extends Controller
         return redirect()
             ->route('livros.index')
             ->with('success', 'Livro criado com sucesso!');
+
+        
+    }*/
+    public function store(LivroStoreRequest $request)
+    {
+        $data = $request->validated();
+
+        // Upload da capa
+        if ($request->hasFile('imagem_capa')) {
+            $data['imagem_capa'] = $request->file('imagem_capa')
+                                        ->store('livros', 'public');
+        }
+
+        // Retirar autores do array para criar o livro
+        $autores = $data['autores'] ?? [];
+        unset($data['autores']);
+
+        $livro = Livro::create($data);
+
+        if (!empty($autores)) {
+            $livro->autores()->sync($autores);
+        }
+
+        return redirect()
+            ->route('livros.index')
+            ->with('success', 'Livro criado com sucesso!');
     }
 
     public function edit(Livro $livro)
@@ -123,7 +151,7 @@ class LivroController extends Controller
         return view('livros.edit', compact('livro', 'editoras', 'autores', 'autoresSelecionados'));
     }
 
-    public function update(Request $request, Livro $livro)
+    /*public function update(Request $request, Livro $livro)
     {
         $data = $request->validate([
             'isbn'        => ['required', 'string', 'max:255', 'unique:livros,isbn,'.$livro->id],
@@ -135,6 +163,33 @@ class LivroController extends Controller
             'autores'     => ['nullable', 'array'],
             'autores.*'   => ['exists:autores,id'],
         ]);
+
+        // Upload da nova capa (se enviada)
+        if ($request->hasFile('imagem_capa')) {
+            if ($livro->imagem_capa) {
+                Storage::disk('public')->delete($livro->imagem_capa);
+            }
+
+            $data['imagem_capa'] = $request->file('imagem_capa')
+                                        ->store('livros', 'public');
+        }
+
+        $autores = $data['autores'] ?? [];
+        unset($data['autores']);
+
+        $livro->update($data);
+
+        // Atualizar relação N:N
+        $livro->autores()->sync($autores);
+
+        return redirect()
+            ->route('livros.index')
+            ->with('success', 'Livro atualizado com sucesso!');
+    }*/
+
+    public function update(LivroUpdateRequest $request, Livro $livro)
+    {
+        $data = $request->validated();
 
         // Upload da nova capa (se enviada)
         if ($request->hasFile('imagem_capa')) {
