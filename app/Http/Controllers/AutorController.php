@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Autor;
+use App\Http\Requests\AutorStoreRequest;
+use App\Http\Requests\AutorUpdateRequest;
+use App\Actions\Autores\CreateAutor;
+use App\Actions\Autores\UpdateAutor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -35,8 +39,9 @@ class AutorController extends Controller
     {
         return view('autores.create');
     }
-
-    public function store(Request $request)
+    
+    // Utilizando um método de armazenamento simplificado sem a ação CreateAutor.
+    /*public function store(Request $request)
     {
         $data = $request->validate([
             'nome' => ['required', 'string', 'max:255'],
@@ -53,14 +58,22 @@ class AutorController extends Controller
         return redirect()
             ->route('autores.index')
             ->with('success', 'Autor criado com sucesso!');
-    }
+    }*/
+    public function store(AutorStoreRequest $request, CreateAutor $action)
+    {
+        $action->execute($request->validated());
 
+        return redirect()->route('autores.index')
+        ->with('success', 'Autor criado com sucesso!');
+    }
+    
+    //
     public function edit(Autor $autore)
     {
         return view('autores.edit', ['autor' => $autore]);
     }
 
-    public function update(Request $request, Autor $autore)
+    /*public function update(Request $request, Autor $autore)
     {
         $data = $request->validate([
             'nome' => ['required', 'string', 'max:255'],
@@ -83,6 +96,14 @@ class AutorController extends Controller
         return redirect()
             ->route('autores.index')
             ->with('success', 'Autor atualizado com sucesso!');
+    }*/
+
+    public function update(AutorUpdateRequest $request, Autor $autore, UpdateAutor $action)
+    {
+        $action->execute($autore, $request->validated());
+
+        return redirect()->route('autores.index')
+        ->with('success', 'Autor atualizado com sucesso!');
     }
 
     public function destroy(Autor $autore)
