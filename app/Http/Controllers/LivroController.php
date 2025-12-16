@@ -16,6 +16,11 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LivroController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Livro::class, 'livro');
+    }
+
     public function index(Request $request)
     {
         $query = Livro::with(['editora', 'autores']);
@@ -53,6 +58,8 @@ class LivroController extends Controller
     // Catalogo de livros
     public function catalogo(Request $request)
     {
+        $this->authorize('viewAny', Livro::class);
+
         $query = Livro::with(['editora', 'autores']);
 
         // Pesquisa simples por nome ou ISBN
@@ -63,18 +70,18 @@ class LivroController extends Controller
         });
     }
 
-    // Filtro por editora
-    if ($editoraId = $request->input('editora_id')) {
+        // Filtro por editora
+        if ($editoraId = $request->input('editora_id')) {
         $query->where('editora_id', $editoraId);
     }
 
-    // Ordenar por nome para o catálogo
-    $livros = $query->orderBy('nome')->paginate(6)->withQueryString();
-    $editoras = Editora::orderBy('nome')->get();
+        // Ordenar por nome para o catálogo
+        $livros = $query->orderBy('nome')->paginate(6)->withQueryString();
+        $editoras = Editora::orderBy('nome')->get();
 
-    return view('livros.catalogo', compact('livros', 'editoras'));
-}
-// Fim do catalogo de livros
+        return view('livros.catalogo', compact('livros', 'editoras'));
+    }
+    // Fim do catalogo de livros
 
 
     public function create()
@@ -118,6 +125,8 @@ class LivroController extends Controller
     // Remover livro
     public function destroy(Livro $livro)
     {
+        $this->authorize('delete', $livro); 
+
         if ($livro->imagem_capa) {
             Storage::disk('public')->delete($livro->imagem_capa);
         }
@@ -135,7 +144,5 @@ class LivroController extends Controller
     {
         return $exporter->stream();
     }
-
-
 
 }
