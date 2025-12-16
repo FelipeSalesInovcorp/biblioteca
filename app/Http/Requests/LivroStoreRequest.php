@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\Rules\Isbn13;
+
 
 class LivroStoreRequest extends FormRequest
 {
@@ -14,6 +16,15 @@ class LivroStoreRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('isbn')) {
+            $this->merge([
+                'isbn' => preg_replace('/[^0-9]/', '', (string) $this->input('isbn')),
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -23,7 +34,8 @@ class LivroStoreRequest extends FormRequest
     {
         return [
             //
-            'isbn'         => ['required', 'string', 'max:255', 'unique:livros,isbn'],
+            /*'isbn'         => ['required', 'string', 'max:255', 'unique:livros,isbn'],*/
+            'isbn' => ['required', new Isbn13, 'unique:livros,isbn'],
             'nome'         => ['required', 'string', 'max:255'],
             'editora_id'   => ['required', 'exists:editoras,id'],
             'bibliografia' => ['nullable', 'string'],
