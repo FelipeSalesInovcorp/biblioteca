@@ -5,6 +5,8 @@ use App\Http\Controllers\LivroController;
 use App\Http\Controllers\AutorController;
 use App\Http\Controllers\EditoraController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminUserController;
+
 
 Route::get('/', function () {
     return view('inicio');
@@ -24,9 +26,22 @@ Route::middleware([
 
 
     // Menus principais
-    Route::resource('editoras', EditoraController::class)->except(['show']);
+    /*Route::resource('editoras', EditoraController::class)->except(['show']);
     Route::resource('autores', AutorController::class)->except(['show']);
-    Route::resource('livros', LivroController::class)->except(['show']);
+    Route::resource('livros', LivroController::class)->except(['show']);*/
+
+    Route::resource('editoras', EditoraController::class)
+    ->except(['show'])
+    ->parameters(['editoras' => 'editora']);
+
+    Route::resource('autores', AutorController::class)
+    ->except(['show'])
+    ->parameters(['autores' => 'autor']);
+
+    Route::resource('livros', LivroController::class)
+    ->except(['show'])
+    ->parameters(['livros' => 'livro']);
+
 
     // Catálogo de livros
     Route::get('/catalogo', [LivroController::class, 'catalogo'])->name('catalogo');
