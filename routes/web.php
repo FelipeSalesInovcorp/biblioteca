@@ -38,9 +38,13 @@ Route::middleware([
     ->except(['show'])
     ->parameters(['autores' => 'autor']);
 
-    Route::resource('livros', LivroController::class)
+    /*Route::resource('livros', LivroController::class)
     ->except(['show'])
+    ->parameters(['livros' => 'livro']);*/
+
+    Route::resource('livros', LivroController::class)
     ->parameters(['livros' => 'livro']);
+
 
     // Requisições de livros
     Route::get('/requisicoes', [RequisicaoController::class, 'index'])->name('requisicoes.index');

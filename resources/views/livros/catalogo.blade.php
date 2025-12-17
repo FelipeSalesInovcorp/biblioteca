@@ -8,6 +8,22 @@
     <div class="py-8">
         <div class="max-w-6xl mx-auto space-y-6">
 
+        @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+        @endif
+
+        @if ($errors->any())
+        <div class="alert alert-error">
+            <ul class="list-disc pl-5">
+                @foreach ($errors->all() as $e)
+                    <li>{{ $e }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+    
             {{-- Filtros / pesquisa --}}
             <form method="GET" class="bg-base-100 p-4 rounded-box shadow flex flex-wrap gap-4 items-end">
                 <div class="form-control">
@@ -97,10 +113,35 @@
                                     </p>
                                 @endif
 
-                                <div class="card-actions justify-end mt-4">
+                                <!--<div class="card-actions justify-end mt-4">
                                     {{-- Aqui podes no futuro colocar botão "Detalhes" --}}
                                     <span class="badge badge-outline">Disponível</span>
+                                </div>-->
+                                
+                                <div class="card-actions justify-end items-center gap-2 mt-4">
+                                    <a href="{{ route('livros.show', $livro) }}" class="btn btn-sm btn-ghost">
+                                        Detalhes
+                                    </a>
+
+                                @if($livro->estaDisponivel())
+                                    <span class="badge badge-success">Disponível</span>
+
+                                    <form method="POST" action="{{ route('requisicoes.store') }}">
+                                @csrf
+                                    <input type="hidden" name="livro_id" value="{{ $livro->id }}">
+                                    <button type="submit" class="btn btn-sm btn-primary">
+                                        Requisitar
+                                    </button>
+                                    </form>
+                                @else
+                                    <span class="badge badge-error">Indisponível</span>
+                                    <button class="btn btn-sm btn-disabled" disabled>
+                                        Requisitar
+                                    </button>
+                                @endif
+
                                 </div>
+
                             </div>
                         </div>
                     @endforeach
