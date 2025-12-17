@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-mark class="block h-9 w-auto" />
+                        <x-application-mark class="block h-12 w-auto" />
                     </a>
                 </div>
 
@@ -15,6 +15,23 @@
                     <x-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')">
                         {{ __('Home') }}
                     </x-nav-link>
+
+                    <!--<x-nav-link href="{{ route('requisicoes.index') }}" :active="request()->routeIs('requisicoes.*')">
+                    {{ __('Requisições') }}
+                    </x-nav-link>-->
+                    <x-nav-link href="{{ route('requisicoes.index') }}" :active="request()->routeIs('requisicoes.*')">
+                    <span class="flex items-center gap-2">
+                    {{ __('Requisições') }}
+
+                    @if($requisicoesAtivasCount > 0)
+                    <span class="badge badge-primary badge-sm">
+                    {{ $requisicoesAtivasCount }}
+                    </span>
+                    @endif
+                    </span>
+                    </x-nav-link>
+
+
                 </div>
             </div>
 

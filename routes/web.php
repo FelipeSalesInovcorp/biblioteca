@@ -38,10 +38,6 @@ Route::middleware([
     ->except(['show'])
     ->parameters(['autores' => 'autor']);
 
-    /*Route::resource('livros', LivroController::class)
-    ->except(['show'])
-    ->parameters(['livros' => 'livro']);*/
-
     Route::resource('livros', LivroController::class)
     ->parameters(['livros' => 'livro']);
 
@@ -61,5 +57,9 @@ Route::middleware([
      // Exportar livros em CSV (abre no Excel)
     Route::get('/livros/export', [LivroController::class, 'exportCsv'])
         ->name('livros.export');
+
+    Route::post('/requisicoes/{requisicao}/confirmar-entrega', [RequisicaoController::class, 'confirmEntrega'])
+    ->name('requisicoes.confirmEntrega');
+
 
 });

@@ -17,12 +17,14 @@ class Requisicao extends Model
         'data_requisicao',
         'data_prevista_fim',
         'data_entrega_real',
+        'dias_decorridos',
     ];
 
     protected $casts = [
         'data_requisicao' => 'date',
         'data_prevista_fim' => 'date',
         'data_entrega_real' => 'date',
+        'dias_decorridos' => 'integer',
     ];
 
     public function user()
