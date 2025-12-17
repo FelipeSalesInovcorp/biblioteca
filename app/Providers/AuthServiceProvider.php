@@ -19,6 +19,7 @@ class AuthServiceProvider extends ServiceProvider
         Livro::class   => LivroPolicy::class,
         Autor::class   => AutorPolicy::class,
         Editora::class => EditoraPolicy::class,
+        \App\Models\Requisicao::class => \App\Policies\RequisicaoPolicy::class,
     ];
 
     /**
