@@ -60,7 +60,7 @@ class LivroController extends Controller
     {
         $this->authorize('viewAny', Livro::class);
 
-        $query = Livro::with(['editora', 'autores']);
+        $query = Livro::with(['editora', 'autores', 'requisicoes']);
 
         // Pesquisa simples por nome ou ISBN
         if ($search = $request->input('search')) {
@@ -144,5 +144,21 @@ class LivroController extends Controller
     {
         return $exporter->stream();
     }
+
+    public function show(Livro $livro)
+    {
+        // carregar relações + histórico de requisições
+        $livro->load(['editora', 'autores', 'requisicoes.user']);
+
+       // ordenar histórico (ativas primeiro, depois mais recentes)
+        $requisicoes = $livro->requisicoes()
+            ->with('user')
+            ->orderByRaw('data_entrega_real IS NULL DESC')
+            ->orderByDesc('data_requisicao')
+            ->get();
+
+        return view('livros.show', compact('livro', 'requisicoes'));
+}
+
 
 }
