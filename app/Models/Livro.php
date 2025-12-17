@@ -51,5 +51,14 @@ class Livro extends Model
     {
         return number_format((float) $this->preco, 2, ',', '.');
     }
-    
+
+    public function requisicoes()
+    {
+        return $this->hasMany(\App\Models\Requisicao::class);
+    }
+
+    public function estaDisponivel(): bool
+    {
+        return ! $this->requisicoes()->whereNull('data_entrega_real')->exists();
+    }
 }
