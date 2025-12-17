@@ -6,6 +6,7 @@ use App\Http\Controllers\AutorController;
 use App\Http\Controllers\EditoraController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminUserController;
+use App\Http\Controllers\RequisicaoController;
 
 
 Route::get('/', function () {
@@ -24,7 +25,6 @@ Route::middleware([
     Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
-
     // Menus principais
     /*Route::resource('editoras', EditoraController::class)->except(['show']);
     Route::resource('autores', AutorController::class)->except(['show']);
@@ -42,6 +42,12 @@ Route::middleware([
     ->except(['show'])
     ->parameters(['livros' => 'livro']);
 
+    // Requisições de livros
+    Route::get('/requisicoes', [RequisicaoController::class, 'index'])->name('requisicoes.index');
+
+    Route::get('/requisicoes/create', [RequisicaoController::class, 'create'])->name('requisicoes.create');
+
+    Route::post('/requisicoes', [RequisicaoController::class, 'store'])->name('requisicoes.store');
 
     // Catálogo de livros
     Route::get('/catalogo', [LivroController::class, 'catalogo'])->name('catalogo');
