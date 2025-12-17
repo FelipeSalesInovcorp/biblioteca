@@ -30,4 +30,11 @@ class RequisicaoPolicy
     {
         return $requisicao->user_id === $user->id; // cidadão só vê as dele
     }
+
+    public function confirmEntrega(User $user, Requisicao $requisicao): bool
+    {
+        // admin passa sempre no before(); cidadão nunca deve confirmar
+        return false;
+    }
+
 }
