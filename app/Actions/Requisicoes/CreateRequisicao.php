@@ -4,8 +4,12 @@ namespace App\Actions\Requisicoes;
 
 use App\Models\Livro;
 use App\Models\Requisicao;
+use App\Mail\RequisicaoConfirmadaAdmin;
+use App\Mail\RequisicaoConfirmadaCidadao;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Mail;
 
 class CreateRequisicao
 {
@@ -45,13 +49,35 @@ class CreateRequisicao
             $hoje = now()->toDateString();
             $fimPrevisto = now()->addDays(5)->toDateString();
 
-            return Requisicao::create([
+            $requisicao = Requisicao::create([
                 'numero_sequencial' => $sequencial,
                 'user_id' => $userId,
                 'livro_id' => $livroId,
                 'data_requisicao' => $hoje,
                 'data_prevista_fim' => $fimPrevisto,
             ]);
+
+            $requisicao->load(['user', 'livro']);
+
+            // Email para o cidadão (queue imediato)
+            Mail::to($requisicao->user->email)
+                ->queue(new RequisicaoConfirmadaCidadao($requisicao));
+
+            // Email para admins (queue com delay)
+            $adminEmails = User::where('role', 'admin')->pluck('email')->toArray();
+
+            if (!empty($adminEmails)) {
+                Mail::to(config('mail.from.address'))
+                    ->bcc($adminEmails)
+                    ->later(
+                        now()->addSeconds(15),
+                        new RequisicaoConfirmadaAdmin($requisicao)
+                    );
+            }
+
+            return $requisicao;
+
+
         });
     }
 }
