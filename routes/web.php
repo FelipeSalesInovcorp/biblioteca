@@ -61,5 +61,10 @@ Route::middleware([
     Route::post('/requisicoes/{requisicao}/confirmar-entrega', [RequisicaoController::class, 'confirmEntrega'])
     ->name('requisicoes.confirmEntrega');
 
+    // Minhas requisições
+    Route::get('/minhas-requisicoes', [RequisicaoController::class, 'minhas'])
+    ->name('requisicoes.minhas');
+
+
 
 });
