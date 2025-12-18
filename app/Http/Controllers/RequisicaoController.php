@@ -73,12 +73,37 @@ class RequisicaoController extends Controller
     }
 
     public function confirmEntrega(Requisicao $requisicao, ConfirmEntregaRequisicao $action)
-{
-    $this->authorize('confirmEntrega', $requisicao);
+    {
+        $this->authorize('confirmEntrega', $requisicao);
 
-    $action->execute($requisicao);
+        $action->execute($requisicao);
 
-    return redirect()->route('requisicoes.index')->with('success', 'Entrega confirmada com sucesso!');
+        return redirect()->route('requisicoes.index')->with('success', 'Entrega confirmada com sucesso!');
+    }
+
+    // Minhas requisições
+    public function minhas(Request $request)
+    {
+        $this->authorize('viewAny', Requisicao::class);
+
+        $status = $request->query('status', 'ativas'); // default
+
+        $query = Requisicao::with('livro')
+            ->where('user_id', auth()->id())
+            ->orderByRaw('data_entrega_real IS NULL DESC')
+            ->orderByDesc('data_requisicao');
+
+        if ($status === 'ativas') {
+            $query->whereNull('data_entrega_real');
+        }
+        elseif ($status === 'entregues') {
+            $query->whereNotNull('data_entrega_real');
+        } // 'todas' não filtra
+
+        $requisicoes = $query->paginate(10)->withQueryString();
+
+        return view('requisicoes.minhas', compact('requisicoes', 'status'));
 }
+
 
 }
