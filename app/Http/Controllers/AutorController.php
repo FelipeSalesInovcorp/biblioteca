@@ -66,12 +66,17 @@ class AutorController extends Controller
         return redirect()->route('autores.index')
         ->with('success', 'Autor criado com sucesso!');
     }
-    
-    //
-    public function edit(Autor $autore)
+
+    /*public function edit(Autor $autore)
     {
         return view('autores.edit', ['autor' => $autore]);
+    }*/
+
+    public function edit(Autor $autor)
+    {
+        return view('autores.edit', compact('autor'));
     }
+
 
     /*public function update(Request $request, Autor $autore)
     {
@@ -98,15 +103,24 @@ class AutorController extends Controller
             ->with('success', 'Autor atualizado com sucesso!');
     }*/
 
-    public function update(AutorUpdateRequest $request, Autor $autore, UpdateAutor $action)
+    /*public function update(AutorUpdateRequest $request, Autor $autore, UpdateAutor $action)
     {
         $action->execute($autore, $request->validated());
 
         return redirect()->route('autores.index')
         ->with('success', 'Autor atualizado com sucesso!');
+    }*/
+
+    public function update(AutorUpdateRequest $request, Autor $autor, UpdateAutor $action)
+    {
+        $action->execute($autor, $request->validated());
+
+        return redirect()
+            ->route('autores.index')
+            ->with('success', 'Autor atualizado com sucesso!');
     }
 
-    public function destroy(Autor $autore)
+    /*public function destroy(Autor $autore)
     {
         if ($autore->foto) {
             Storage::disk('public')->delete($autore->foto);
@@ -117,6 +131,18 @@ class AutorController extends Controller
         return redirect()
             ->route('autores.index')
             ->with('success', 'Autor removido com sucesso!');
+    }*/
+
+    public function destroy(Autor $autor)
+    {
+        if ($autor->foto) {
+            Storage::disk('public')->delete($autor->foto);
+        }
+
+        $autor->delete();
+
+        return redirect()
+            ->route('autores.index')
+            ->with('success', 'Autor removido com sucesso!');
     }
 }
-

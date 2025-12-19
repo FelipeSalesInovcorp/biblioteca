@@ -38,7 +38,7 @@ class RequisicaoController extends Controller
 
     // Lista
     $requisicoes = (clone $baseQuery)
-        ->with('livro')
+        ->with('livro', 'user')
         ->latest()
         ->paginate(10);
 
@@ -69,8 +69,20 @@ class RequisicaoController extends Controller
 
         $action->execute(auth()->id(), (int) $request->validated()['livro_id']);
 
-        return redirect()->route('requisicoes.index')->with('success', 'Requisição criada com sucesso!');
+        $user = auth()->user();
+
+        if ($user->isCidadao()) {
+            return redirect()
+                ->route('requisicoes.minhas')
+                ->with('success', 'Requisição criada com sucesso!');
+        }
+
+        // Admin
+        return redirect()
+            ->route('requisicoes.index')
+            ->with('success', 'Requisição criada com sucesso!');
     }
+
 
     public function confirmEntrega(Requisicao $requisicao, ConfirmEntregaRequisicao $action)
     {
