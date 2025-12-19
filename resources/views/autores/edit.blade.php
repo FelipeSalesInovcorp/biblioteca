@@ -7,7 +7,7 @@
         <div class="max-w-xl mx-auto bg-base-100 p-6 rounded-box shadow">
 
             <form method="POST"
-                action="{{ route('autores.update', $autor) }}"
+                action="{{ route('autores.update', ['autor' => $autor->id]) }}"
                 enctype="multipart/form-data"
                 class="space-y-4">
 

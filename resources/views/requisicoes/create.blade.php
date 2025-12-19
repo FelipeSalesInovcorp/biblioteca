@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl">Nova Requisição</h2>
+        <h2 class="text-2xl font-bold text-center text-base-content leading-tight text-blue-800">Nova Requisição</h2>
     </x-slot>
 
     <div class="p-6">
