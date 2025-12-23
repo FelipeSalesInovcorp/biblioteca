@@ -7,6 +7,7 @@ use App\Http\Controllers\EditoraController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\RequisicaoController;
+Use App\Http\Controllers\Admin\GoogleBooksController;
 
 
 Route::get('/', function () {
@@ -64,6 +65,19 @@ Route::middleware([
     // Minhas requisições
     Route::get('/minhas-requisicoes', [RequisicaoController::class, 'minhas'])
     ->name('requisicoes.minhas');
+
+    // Administração - apenas para Admins
+    // ----------------------------------------------
+    Route::middleware(['auth', 'verified', 'role:Admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::get('/google-books', [GoogleBooksController::class, 'index'])
+            ->name('googlebooks.index');
+
+        Route::post('/google-books/import', [GoogleBooksController::class, 'import'])
+            ->name('googlebooks.import');
+    });
 
 
 
