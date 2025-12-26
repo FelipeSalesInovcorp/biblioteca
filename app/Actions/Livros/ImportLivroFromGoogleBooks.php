@@ -23,7 +23,7 @@ class ImportLivroFromGoogleBooks
         // 1) Obter dados completos do volume (preview mapeado)
         $data = $this->googleBooks->getVolume($googleVolumeId);
 
-        // 2) Regras mínimas de integridade (ajusta conforme o teu BD)
+        // 2) Regras mínimas de integridade dos dados
         $isbn = $data['isbn'] ?? null;
         if (!$isbn) {
             throw new RuntimeException('Não foi possível importar: ISBN em falta.');
@@ -43,21 +43,29 @@ class ImportLivroFromGoogleBooks
                 $editora = Editora::firstOrCreate(
                     ['nome' => $data['editora_nome']],
                     [
-                        'logotipo' => 'img/editora-default.png', // ou null se for nullable
+                        'logotipo' => 'editoras/editora-default.png', // ou null se for nullable
                         'notas' => 'Criada automaticamente via importação Google Books.',
                     ]
                 );
             }
 
 
-            // 4) Capa: descarregar (opcional), guardar em storage e gravar path
+            // 4) Capa
             $capaPath = $this->downloadCoverIfAny($data['capa_url'] ?? null, $isbn);
+
+            // Processar bibliografia
+            $bibliografia = null;
+            if (!empty($data['bibliografia'])) {
+                $bibliografia = strip_tags($data['bibliografia']); // Remove HTML tags
+            }
 
             // 5) Criar Livro
             $livro = Livro::create([
                 'isbn' => $isbn,
                 'nome' => $data['nome'] ?? 'Sem título',
-                'bibliografia' => $data['bibliografia'] ?? null,
+                //'bibliografia' => $data['bibliografia'] ?? null,
+                'bibliografia' => $bibliografia,
+                'ano_publicacao' => $data['ano_publicacao'] ?? null,
                 'preco' => $data['preco'] ?? null,
                 'imagem_capa' => $capaPath,
                 'editora_id' => $editora?->id,
@@ -74,7 +82,7 @@ class ImportLivroFromGoogleBooks
                 $autor = Autor::firstOrCreate(
                     ['nome' => $nomeAutor],
                     [ // Valores para criar novo registro
-                        'foto' => 'img/autor-default.png', // CAMPO OBRIGATÓRIO
+                        'foto' => 'autores/autor-default.png', // ou null se for nullable
                         'notas' => 'Criado automaticamente via importação Google Books.',
                     ]
                 );

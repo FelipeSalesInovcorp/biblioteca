@@ -39,6 +39,10 @@ Route::middleware([
     ->except(['show'])
     ->parameters(['autores' => 'autor']);
 
+    // Exportar livros em CSV (abre no Excel)
+    Route::get('/livros/export', [LivroController::class, 'exportCsv'])
+        ->name('livros.export');
+
     Route::resource('livros', LivroController::class)
     ->parameters(['livros' => 'livro']);
 
@@ -56,8 +60,8 @@ Route::middleware([
     // Para deixar o catálogo público, basta tirar essa rota do group e deixá-la fora do middleware.
 
      // Exportar livros em CSV (abre no Excel)
-    Route::get('/livros/export', [LivroController::class, 'exportCsv'])
-        ->name('livros.export');
+    /*Route::get('/livros/export', [LivroController::class, 'exportCsv'])
+        ->name('livros.export');*/
 
     Route::post('/requisicoes/{requisicao}/confirmar-entrega', [RequisicaoController::class, 'confirmEntrega'])
     ->name('requisicoes.confirmEntrega');
