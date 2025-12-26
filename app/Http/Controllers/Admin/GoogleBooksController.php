@@ -33,7 +33,8 @@ class GoogleBooksController extends Controller
         $livro = $importAction->handle($request->googleVolumeId());
 
         return redirect()
-            ->route('admin.livros.show', $livro) // ajusta para a tua route real
+            //->route('admin.livros.show', $livro) // ajusta para a tua route real
+            ->route('admin.googlebooks.index', ['q' => request('q')])
             ->with('success', 'Livro importado com sucesso.');
     }
 }
