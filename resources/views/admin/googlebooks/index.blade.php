@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl leading-tight text-center text-base-content leading-tight text-blue-800">Google Books — Importação</h2>
+        <h2 class="font-semibold text-xl leading-tight text-center text-base-content leading-tight text-blue-800">📥 Google Books — Importação</h2>
     </x-slot>
 
     <div class="p-6 space-y-6">
