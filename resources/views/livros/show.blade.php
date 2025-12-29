@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold text-blue-800 text-center">
+            <h2 class="text-2xl font-bold  text-blue-800 text-center">
                 📘 {{ $livro->nome }}
             </h2>
 
@@ -41,7 +41,12 @@
                             </p>
 
                             <p class="font-semibold mt-2">
-                                {{ number_format($livro->preco, 2, ',', '.') }} €
+                                <!--{{ number_format($livro->preco, 2, ',', '.') }} €-->
+                                @if($livro->preco !== null)
+                                {{ number_format((float)$livro->preco, 2, ',', '.') }} €
+                                @else
+                                <span class="badge badge-ghost">Preço não disponível</span>
+                                @endif
                             </p>
 
                             <div class="mt-3 flex items-center gap-2">

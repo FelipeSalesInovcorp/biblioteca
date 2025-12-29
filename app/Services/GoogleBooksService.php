@@ -73,7 +73,7 @@ class GoogleBooksService
         $response = Http::timeout(15)
             ->retry(2, 200)
             ->withOptions([
-                'verify' => false, // ← ADICIONE ESTA LINHA
+                'verify' => false, 
             ])
             ->get($this->baseUrl . '/volumes', array_filter([
                 'q' => $query,
@@ -95,12 +95,8 @@ class GoogleBooksService
             'items' => array_map([$this, 'mapVolumeToLocalPreview'], $data['items'] ?? []),
         ];
     }
-
-
-
-    /**
-     * Obtém 1 volume específico pelo ID.
-     */
+    
+     //Obtém detalhes de um volume específico pelo seu ID do Google Books.
     public function getVolume(string $googleVolumeId): array
     {
         $googleVolumeId = trim($googleVolumeId);
@@ -123,10 +119,9 @@ class GoogleBooksService
         return $this->mapVolumeToLocalPreview($response->json());
     }
 
-    /**
-     * Mapeia um volume (Google) para um preview compatível com o teu BD (sem gravar).
-     * Ajustável aos teus campos: Livro(nome,isbn,preco,bibliografia,imagem_capa), Editora(nome), Autores(nome)
-     */
+  
+    // campos: Livro(nome,isbn,preco,bibliografia,imagem_capa), Editora(nome), Autores(nome)
+    
     private function mapVolumeToLocalPreview(array $volume): array
     {
         $info = $volume['volumeInfo'] ?? [];
@@ -139,7 +134,7 @@ class GoogleBooksService
         $title = $info['title'] ?? 'Sem título';
         $subtitle = $info['subtitle'] ?? null;
 
-        // “bibliografia” no teu projeto parece ser descrição/resumo
+        // “bibliografia” 
         $description = $info['description'] ?? null;
 
         // Editor(a) -> Editora
@@ -155,14 +150,14 @@ class GoogleBooksService
             $price = is_numeric($listPrice) ? (float) $listPrice : null;
         }
 
-        // Capa (URL). Para gravar localmente vais descarregar depois na Action.
+        // Capa (URL). Para gravar localmente depois.
         $thumbnail = $images['thumbnail'] ?? $images['smallThumbnail'] ?? null;
         $thumbnail = $this->normalizeCoverUrl($thumbnail);
 
         return [
             'google_volume_id' => $volume['id'] ?? null,
 
-            // Campos “Livro”
+            //  “Livro”
             'nome' => $subtitle ? ($title . ': ' . $subtitle) : $title,
             'isbn' => $isbn,
             'bibliografia' => $description,
@@ -200,17 +195,17 @@ class GoogleBooksService
         return null;
     }
 
-    /**
-     * Normaliza a URL da capa para https e tenta “forçar” melhor qualidade quando possível.
-     */
+    
+    // Normaliza a URL da capa para https e tenta “forçar” melhor qualidade quando possível.
+    
     private function normalizeCoverUrl(?string $url): ?string
     {
         if (! $url) return null;
 
         $url = str_replace('http://', 'https://', $url);
 
-        // A Google muitas vezes vem com parâmetros tipo &zoom=1
-        // Podemos tentar um zoom maior (nem sempre funciona, mas ajuda)
+        //  Google muitas vezes vem com parâmetros tipo &zoom=1
+        // tentar um zoom maior (nem sempre funciona, mas ajuda)
         if (str_contains($url, 'zoom=')) {
             $url = preg_replace('/zoom=\d+/', 'zoom=2', $url);
         }

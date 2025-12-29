@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold text-blue-800">Minhas Requisições</h2>
+            <h2 class="text-2xl font-bold text-blue-800">📝 Minhas Requisições</h2>
 
             <a href="{{ route('requisicoes.create') }}" class="btn btn-primary">
                 Nova Requisição
