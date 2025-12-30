@@ -8,6 +8,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\RequisicaoController;
 Use App\Http\Controllers\Admin\GoogleBooksController;
+use App\Http\Controllers\AvaliacaoController;
+use App\Http\Controllers\Admin\AvaliacaoAdminController;
 
 
 Route::get('/', function () {
@@ -62,7 +64,12 @@ Route::middleware([
      // Exportar livros em CSV (abre no Excel)
     /*Route::get('/livros/export', [LivroController::class, 'exportCsv'])
         ->name('livros.export');*/
+    
+    // Detalhes da requisição
+    Route::get('/requisicoes/{requisicao}', [RequisicaoController::class, 'show'])
+    ->name('requisicoes.show');
 
+    // Confirmar entrega de requisição
     Route::post('/requisicoes/{requisicao}/confirmar-entrega', [RequisicaoController::class, 'confirmEntrega'])
     ->name('requisicoes.confirmEntrega');
 
@@ -71,7 +78,6 @@ Route::middleware([
     ->name('requisicoes.minhas');
 
     // Administração - apenas para Admins
-    // ----------------------------------------------
     Route::middleware(['auth', 'verified', 'role:Admin'])
     ->prefix('admin')
     ->name('admin.')
@@ -81,7 +87,16 @@ Route::middleware([
 
         Route::post('/google-books/import', [GoogleBooksController::class, 'import'])
             ->name('googlebooks.import');
+
+        // ✅ Avaliações (moderação)
+        Route::get('/avaliacoes', [AvaliacaoAdminController::class, 'index'])->name('avaliacoes.index');
+        Route::get('/avaliacoes/{avaliacao}', [AvaliacaoAdminController::class, 'show'])->name('avaliacoes.show');
+        Route::patch('/avaliacoes/{avaliacao}/aprovar', [AvaliacaoAdminController::class, 'aprovar'])->name('avaliacoes.aprovar');
+        Route::patch('/avaliacoes/{avaliacao}/recusar', [AvaliacaoAdminController::class, 'recusar'])->name('avaliacoes.recusar');
     });
+
+    Route::post('/requisicoes/{requisicao}/avaliacoes', [AvaliacaoController::class, 'store'])
+    ->name('avaliacoes.store');
 
 
 
