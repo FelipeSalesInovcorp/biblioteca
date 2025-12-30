@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Livro;
 use App\Models\Editora;
 use App\Models\Autor;
+use App\Models\Avaliacao;
 use Illuminate\Http\Request;
 use App\Http\Requests\LivroStoreRequest;
 use App\Http\Requests\LivroUpdateRequest;
@@ -60,7 +61,12 @@ class LivroController extends Controller
     {
         $this->authorize('viewAny', Livro::class);
 
-        $query = Livro::with(['editora', 'autores', 'requisicoes']);
+        //$query = Livro::with(['editora', 'autores', 'requisicoes']);
+
+        $query = Livro::with(['editora', 'autores', 'requisicoes'])
+            ->withCount(['avaliacoes as avaliacoes_count' => function ($q) {
+                $q->where('estado', Avaliacao::ESTADO_ATIVA);
+            }]);
 
         // Pesquisa simples por nome ou ISBN
         if ($search = $request->input('search')) {
@@ -145,7 +151,7 @@ class LivroController extends Controller
         return $exporter->stream();
     }
 
-    public function show(Livro $livro)
+    /*public function show(Livro $livro)
     {
         // carregar relações + histórico de requisições
         $livro->load(['editora', 'autores', 'requisicoes.user']);
@@ -158,7 +164,32 @@ class LivroController extends Controller
             ->get();
 
         return view('livros.show', compact('livro', 'requisicoes'));
-}
+    }*/
 
+    public function show(Livro $livro)
+    {
+        // carregar relações + histórico de requisições + reviews ativas
+        $livro->load([
+            'editora',
+            'autores',
+            'requisicoes.user',
+            'avaliacoes' => function ($query) {
+                $query->where('estado', \App\Models\Avaliacao::ESTADO_ATIVA)
+                    ->with('user') // carregar o cidadão que fez a review
+                    ->latest();
+            }
+        ]);
 
+        // ordenar histórico (ativas primeiro, depois mais recentes)
+        $requisicoes = $livro->requisicoes()
+            ->with('user')
+            ->orderByRaw('data_entrega_real IS NULL DESC')
+            ->orderByDesc('data_requisicao')
+            ->get();
+
+        // avaliações ativas já vêm filtradas no load acima
+        $avaliacoesAtivas = $livro->avaliacoes;
+
+        return view('livros.show', compact('livro', 'requisicoes', 'avaliacoesAtivas'));
+    }
 }

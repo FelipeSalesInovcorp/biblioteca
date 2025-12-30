@@ -38,6 +38,11 @@
                     <x-nav-link href="{{ route('admin.googlebooks.index') }}" :active="request()->routeIs('admin.googlebooks.*')">
                         {{ __('Google Books') }}
                     </x-nav-link>
+
+                    <x-nav-link href="{{ route('admin.avaliacoes.index') }}" :active="request()->routeIs('admin.avaliacoes.*')">
+                        {{ __('Avaliações') }}
+                    </x-nav-link>
+
                     @else
                     <x-nav-link href="{{ route('requisicoes.minhas') }}" :active="request()->routeIs('requisicoes.minhas')">
                         <span class="flex items-center gap-2">

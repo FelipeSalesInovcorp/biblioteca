@@ -115,19 +115,31 @@
                             @endif
                         </p>
 
-
                         @if ($livro->bibliografia)
                         <p class="text-xs text-base-content/60 mt-2 line-clamp-3">
                             {{ $livro->bibliografia }}
                         </p>
                         @endif
 
-                        <!--<div class="card-actions justify-end mt-4">
-                                    {{-- Aqui podes no futuro colocar botão "Detalhes" --}}
-                                    <span class="badge badge-outline">Disponível</span>
-                                </div>-->
-
                         <div class="card-actions justify-end items-center gap-2 mt-4">
+                            <!--<a href="{{ route('livros.show', $livro) }}#avaliacoes"
+                                class="btn btn-sm btn-outline">
+                                Ver avaliações
+                            </a>-->
+
+                            <!--<a href="{{ route('livros.show', $livro) }}#avaliacoes" class="btn btn-sm btn-outline">
+                                Ver avaliações ({{ $livro->avaliacoes_count ?? 0 }})
+                            </a>-->
+
+                            @if(($livro->avaliacoes_count ?? 0) > 0)
+                            <a href="{{ route('livros.show', $livro) }}#avaliacoes" class="btn btn-sm btn-outline">
+                                Ver avaliações ({{ $livro->avaliacoes_count }})
+                            </a>
+                            @else
+                            <span class="badge badge-ghost">Sem avaliações</span>
+                            @endif
+
+
                             <a href="{{ route('livros.show', $livro) }}" class="btn btn-sm btn-ghost">
                                 Detalhes
                             </a>

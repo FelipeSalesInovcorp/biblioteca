@@ -74,10 +74,14 @@ class User extends Authenticatable
     {
         return $this->role === 'cidadao';
     }
-
     
     public function requisicoes()
     {
         return $this->hasMany(\App\Models\Requisicao::class);
+    }
+
+    public function avaliacoes()
+    {
+        return $this->hasMany(\App\Models\Avaliacao::class);
     }
 }
