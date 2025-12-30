@@ -77,6 +77,50 @@
                 </div>
             </div>
 
+
+            {{-- Avaliações (apenas ativas) --}}
+            <div id="avaliacoes" class="card bg-base-100 shadow">
+                <div class="card-body">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-lg font-bold">⭐ Avaliações</h3>
+
+                        {{-- Opcional: contador --}}
+                        <span class="badge badge-outline">
+                            {{ $avaliacoesAtivas->count() }} {{ $avaliacoesAtivas->count() === 1 ? 'avaliação' : 'avaliações' }}
+                        </span>
+                    </div>
+
+                    @if($avaliacoesAtivas->isEmpty())
+                    <p class="text-base-content/60">Este livro ainda não tem avaliações aprovadas.</p>
+                    @else
+                    <div class="space-y-4 mt-2">
+                        @foreach($avaliacoesAtivas as $a)
+                        <div class="p-4 bg-base-200/40 rounded-box">
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <p class="font-semibold">
+                                        {{ $a->user?->name ?? 'Cidadão' }}
+                                    </p>
+                                    <p class="text-xs text-base-content/60">
+                                        {{ $a->created_at?->format('d/m/Y H:i') }}
+                                    </p>
+                                </div>
+
+                                <div class="badge badge-neutral">
+                                    {{ $a->classificacao }}/5
+                                </div>
+                            </div>
+
+                            <p class="mt-3 text-sm text-base-content/80">
+                                {{ $a->comentario }}
+                            </p>
+                        </div>
+                        @endforeach
+                    </div>
+                    @endif
+                </div>
+            </div>
+
             {{-- Histórico de requisições --}}
             <div class="card bg-base-100 shadow">
                 <div class="card-body">

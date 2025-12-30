@@ -42,4 +42,8 @@ class Requisicao extends Model
         return $query->whereNull('data_entrega_real');
     }
     
+    public function avaliacao()
+    {
+        return $this->hasOne(Avaliacao::class);
+    }
 }
