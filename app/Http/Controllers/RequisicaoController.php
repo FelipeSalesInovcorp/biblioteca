@@ -83,6 +83,16 @@ class RequisicaoController extends Controller
             ->with('success', 'Requisição criada com sucesso!');
     }
 
+    public function show(Requisicao $requisicao)
+    {
+        $this->authorize('view', $requisicao);
+
+        $requisicao->loadMissing(['livro', 'user', 'avaliacao']);
+
+        return view('requisicoes.show', compact('requisicao'));
+    }
+
+
 
     public function confirmEntrega(Requisicao $requisicao, ConfirmEntregaRequisicao $action)
     {
