@@ -78,6 +78,94 @@
             </div>
 
 
+            {{-- RELACIONADOS / SUGESTÕES  --}}
+
+            {{-- 1) Relacionados por descrição --}}
+            @if(isset($livrosRelacionados) && $livrosRelacionados->count())
+            <div class="card bg-base-100 shadow">
+                <div class="card-body">
+                    <h3 class="text-lg font-bold">🔎 Livros relacionados (por descrição)</h3>
+                    <p class="text-sm text-base-content/60">
+                        Sugestões geradas automaticamente com base em semelhança de palavras na bibliografia.
+                    </p>
+
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-3">
+                        @foreach($livrosRelacionados as $rel)
+                        <a href="{{ route('livros.show', $rel) }}"
+                            class="card bg-base-200/40 hover:shadow transition">
+                            <div class="card-body">
+                                <h4 class="font-semibold line-clamp-2">{{ $rel->nome }}</h4>
+
+                                <p class="text-xs text-base-content/60">
+                                    {{ $rel->editora->nome ?? '—' }}
+                                </p>
+
+                                @if($rel->bibliografia)
+                                <p class="text-xs text-base-content/60 line-clamp-3 mt-1">
+                                    {{ $rel->bibliografia }}
+                                </p>
+                                @endif
+
+                                <div class="mt-2">
+                                    @if($rel->estaDisponivel())
+                                    <span class="badge badge-success">Disponível</span>
+                                    @else
+                                    <span class="badge badge-error">Indisponível</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            {{-- 2) Fallback honesto --}}
+            @elseif(isset($outrasSugestoes) && $outrasSugestoes->count())
+            <div class="card bg-base-100 shadow">
+                <div class="card-body">
+                    <h3 class="text-lg font-bold">✨ Outras sugestões</h3>
+                    <p class="text-sm text-base-content/60">
+                        Não foram encontrados livros suficientemente semelhantes pela descrição. Aqui vão outras sugestões.
+                    </p>
+
+                    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-3">
+                        @foreach($outrasSugestoes as $sug)
+                        <a href="{{ route('livros.show', $sug) }}"
+                            class="card bg-base-200/40 hover:shadow transition">
+                            <div class="card-body">
+                                <h4 class="font-semibold line-clamp-2">{{ $sug->nome }}</h4>
+
+                                <p class="text-xs text-base-content/60">
+                                    {{ $sug->editora->nome ?? '—' }}
+                                </p>
+
+                                {{-- ✅ aqui era o bug: estava $rel --}}
+                                @if($sug->bibliografia)
+                                <p class="text-xs text-base-content/60 line-clamp-3 mt-1">
+                                    {{ $sug->bibliografia }}
+                                </p>
+                                @endif
+
+                                <div class="mt-2">
+                                    @if($sug->estaDisponivel())
+                                    <span class="badge badge-success">Disponível</span>
+                                    @else
+                                    <span class="badge badge-error">Indisponível</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+            @endif
+
+            {{-- FIM RELACIONADOS / SUGESTÕES  --}}
+
+
+
             {{-- Avaliações (apenas ativas) --}}
             <div id="avaliacoes" class="card bg-base-100 shadow">
                 <div class="card-body">
@@ -120,6 +208,8 @@
                     @endif
                 </div>
             </div>
+
+
 
             {{-- Histórico de requisições --}}
             <div class="card bg-base-100 shadow">

@@ -12,6 +12,7 @@ use App\Http\Requests\LivroUpdateRequest;
 use App\Actions\Livros\CreateLivro;
 use App\Actions\Livros\UpdateLivro;
 use App\Services\Exports\LivrosCsvExporter;
+use App\Services\RelatedBooksService;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -151,45 +152,62 @@ class LivroController extends Controller
         return $exporter->stream();
     }
 
-    /*public function show(Livro $livro)
+
+    public function show(Livro $livro, RelatedBooksService $relatedBooks)
     {
-        // carregar relações + histórico de requisições
-        $livro->load(['editora', 'autores', 'requisicoes.user']);
+         // carregar relações + histórico de requisições + reviews ativas
+    $livro->load([
+        'editora',
+        'autores',
+        'requisicoes.user',
+        'avaliacoes' => function ($query) {
+            $query->where('estado', \App\Models\Avaliacao::ESTADO_ATIVA)
+                ->with('user') // carregar o cidadão que fez a review
+                ->latest();
+        }
+    ]);
 
-       // ordenar histórico (ativas primeiro, depois mais recentes)
-        $requisicoes = $livro->requisicoes()
-            ->with('user')
-            ->orderByRaw('data_entrega_real IS NULL DESC')
-            ->orderByDesc('data_requisicao')
-            ->get();
+    // ordenar histórico (ativas primeiro, depois mais recentes)
+    $requisicoes = $livro->requisicoes()
+        ->with('user')
+        ->orderByRaw('data_entrega_real IS NULL DESC')
+        ->orderByDesc('data_requisicao')
+        ->get();
 
-        return view('livros.show', compact('livro', 'requisicoes'));
-    }*/
+    // avaliações ativas já vêm filtradas no load acima
+    $avaliacoesAtivas = $livro->avaliacoes;
 
-    public function show(Livro $livro)
-    {
-        // carregar relações + histórico de requisições + reviews ativas
-        $livro->load([
-            'editora',
-            'autores',
-            'requisicoes.user',
-            'avaliacoes' => function ($query) {
-                $query->where('estado', \App\Models\Avaliacao::ESTADO_ATIVA)
-                    ->with('user') // carregar o cidadão que fez a review
-                    ->latest();
-            }
-        ]);
+    //  Relacionados por descrição (mais rigoroso)
+    $livrosRelacionados = $relatedBooks->getRelated($livro, 6, 0.04);
 
-        // ordenar histórico (ativas primeiro, depois mais recentes)
-        $requisicoes = $livro->requisicoes()
-            ->with('user')
-            ->orderByRaw('data_entrega_real IS NULL DESC')
-            ->orderByDesc('data_requisicao')
-            ->get();
+    //  Fallback honesto: se não houver relacionados "bons", mostrar outras sugestões
+    $outrasSugestoes = collect();
 
-        // avaliações ativas já vêm filtradas no load acima
-        $avaliacoesAtivas = $livro->avaliacoes;
-
-        return view('livros.show', compact('livro', 'requisicoes', 'avaliacoesAtivas'));
+    if ($livrosRelacionados->isEmpty()) {
+        $outrasSugestoes = $livro->editora_id
+            ? \App\Models\Livro::query()
+                ->whereKeyNot($livro->id)
+                ->where('editora_id', $livro->editora_id)
+                ->with(['editora', 'autores'])
+                ->orderBy('nome')
+                ->limit(6)
+                ->get()
+            : \App\Models\Livro::query()
+                ->whereKeyNot($livro->id)
+                ->with(['editora', 'autores'])
+                ->orderByDesc('id')
+                ->limit(6)
+                ->get();
     }
+
+    return view('livros.show', compact(
+        'livro',
+        'requisicoes',
+        'avaliacoesAtivas',
+        'livrosRelacionados',
+        'outrasSugestoes'
+    ));
+    }
+
 }
+
