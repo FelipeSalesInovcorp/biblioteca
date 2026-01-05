@@ -5,6 +5,7 @@ namespace App\Actions\Requisicoes;
 use App\Models\Requisicao;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use App\Actions\Livros\NotificarLivroDisponivel;
 
 class ConfirmEntregaRequisicao
 {
@@ -27,6 +28,12 @@ class ConfirmEntregaRequisicao
                 'data_entrega_real' => $entrega,
                 'dias_decorridos' => $dias,
             ]);
+
+            // ✅ Se após a entrega o livro ficar disponível, notificar alertas pendentes
+            $livro = $requisicao->livro()->first();
+            if ($livro) {
+                app(NotificarLivroDisponivel::class)->handle($livro);
+            }
 
             return $requisicao;
         });
