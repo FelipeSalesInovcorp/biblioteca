@@ -10,6 +10,19 @@
     </x-slot>
 
     <div class="py-8">
+
+        @if (session('success'))
+        <div class="alert alert-success shadow mb-4">
+            <span>{{ session('success') }}</span>
+        </div>
+        @endif
+
+        @if (session('info'))
+        <div class="alert alert-info shadow mb-4">
+            <span>{{ session('info') }}</span>
+        </div>
+        @endif
+
         <div class="max-w-6xl mx-auto space-y-6">
 
             {{-- Info do livro --}}
@@ -63,6 +76,15 @@
                                 @else
                                 <span class="badge badge-error">Indisponível</span>
                                 <button class="btn btn-sm btn-disabled" disabled>Requisitar</button>
+
+                                {{-- Formulário de alerta --}}
+                                <form method="POST" action="{{ route('livros.alertas.store', $livro) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline">
+                                        <i class="bi bi-bell-fill"></i> Avisar-me quando estiver disponível
+                                    </button>
+                                </form>
+
                                 @endif
                             </div>
 

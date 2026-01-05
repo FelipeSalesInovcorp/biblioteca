@@ -10,6 +10,7 @@ use App\Http\Controllers\RequisicaoController;
 Use App\Http\Controllers\Admin\GoogleBooksController;
 use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\Admin\AvaliacaoAdminController;
+use App\Http\Controllers\LivroAlertaController;
 
 
 Route::get('/', function () {
@@ -98,6 +99,8 @@ Route::middleware([
     Route::post('/requisicoes/{requisicao}/avaliacoes', [AvaliacaoController::class, 'store'])
     ->name('avaliacoes.store');
 
-
+    // Alertas de disponibilidade de livro (Cidadão)
+    Route::post('/livros/{livro}/alertas', [LivroAlertaController::class, 'store'])
+        ->name('livros.alertas.store');
 
 });
