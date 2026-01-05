@@ -6,6 +6,8 @@
             <a href="{{ route('requisicoes.create') }}" class="btn btn-primary">
                 Nova Requisição
             </a>
+
+            <!-- <a href="{{ url()->previous() }}" class="btn btn-ghost">Voltar</a> -->
         </div>
     </x-slot>
 
