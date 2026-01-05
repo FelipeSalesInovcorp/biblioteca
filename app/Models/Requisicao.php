@@ -18,6 +18,7 @@ class Requisicao extends Model
         'data_prevista_fim',
         'data_entrega_real',
         'dias_decorridos',
+        'reminder_enviado_em',
     ];
 
     protected $casts = [
