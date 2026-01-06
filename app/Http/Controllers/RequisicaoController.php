@@ -110,10 +110,17 @@ class RequisicaoController extends Controller
 
         $status = $request->query('status', 'ativas'); // default
 
+        /*$query = Requisicao::with('livro')
+            ->where('user_id', auth()->id())
+            ->orderByRaw('data_entrega_real IS NULL DESC')
+            ->orderByDesc('data_requisicao');*/
+
         $query = Requisicao::with('livro')
+            ->withExists('avaliacao') // adiciona flag avaliacao_exists
             ->where('user_id', auth()->id())
             ->orderByRaw('data_entrega_real IS NULL DESC')
             ->orderByDesc('data_requisicao');
+
 
         if ($status === 'ativas') {
             $query->whereNull('data_entrega_real');
