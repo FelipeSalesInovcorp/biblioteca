@@ -34,7 +34,6 @@ class ConfirmEntregaRequisicao
                 app(NotificarCidadaoQuePodeAvaliar::class)->handle($requisicao);
             });
 
-
             //  Se após a entrega o livro ficar disponível, notificar alertas pendentes
             $livro = $requisicao->livro()->first();
             if ($livro) {
