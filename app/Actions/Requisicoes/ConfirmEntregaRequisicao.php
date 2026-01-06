@@ -6,6 +6,7 @@ use App\Models\Requisicao;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use App\Actions\Livros\NotificarLivroDisponivel;
+use App\Actions\Avaliacoes\NotificarCidadaoQuePodeAvaliar;
 
 class ConfirmEntregaRequisicao
 {
@@ -29,7 +30,12 @@ class ConfirmEntregaRequisicao
                 'dias_decorridos' => $dias,
             ]);
 
-            // ✅ Se após a entrega o livro ficar disponível, notificar alertas pendentes
+            // Notificar cidadão para avaliar a requisição
+            DB::afterCommit(function () use ($requisicao) {
+                app(NotificarCidadaoQuePodeAvaliar::class)->handle($requisicao);
+            });
+
+            //  Se após a entrega o livro ficar disponível, notificar alertas pendentes
             $livro = $requisicao->livro()->first();
             if ($livro) {
                 app(NotificarLivroDisponivel::class)->handle($livro);
