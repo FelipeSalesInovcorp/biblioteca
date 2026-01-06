@@ -72,10 +72,23 @@
                             @if(!$r->avaliacao_exists)
                             <span class="badge badge-info">Pode avaliar</span>
 
+<<<<<<< HEAD
                             <a href="{{ route('requisicoes.show', $r) }}"
                                 class="btn btn-xs btn-outline">
                                 Avaliar
                             </a>
+=======
+                            <!--<a href="{{ route('requisicoes.show', $r) }}"
+                                class="btn btn-xs btn-outline">
+                                Avaliar
+                            </a>-->
+
+                            <a href="{{ route('requisicoes.show', $r) }}"
+                                class="btn btn-success btn-xs">
+                                Avaliar Livro
+                            </a>
+
+>>>>>>> d049a6785a5d7615763da6d1509a6ab86ca37914
                             @endif
                             @else
                             <span class="badge badge-warning">Ativa</span>
@@ -83,6 +96,10 @@
                         </td>
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> d049a6785a5d7615763da6d1509a6ab86ca37914
                     </tr>
                     @empty
                     <tr>
