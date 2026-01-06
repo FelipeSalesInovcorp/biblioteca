@@ -57,13 +57,39 @@
                         <td>{{ $r->data_prevista_fim?->format('d/m/Y') }}</td>
                         <td>{{ $r->data_entrega_real?->format('d/m/Y') ?? '—' }}</td>
                         <td>{{ $r->dias_decorridos ?? '—' }}</td>
-                        <td>
+                        <!--<td>
                             @if($r->data_entrega_real)
                             <span class="badge badge-success">Entregue</span>
                             @else
                             <span class="badge badge-warning">Ativa</span>
                             @endif
+                        </td>-->
+
+                        <td class="space-x-2">
+                            @if($r->data_entrega_real)
+                            <span class="badge badge-success">Entregue</span>
+
+                            @if(!$r->avaliacao_exists)
+                            <span class="badge badge-info">Pode avaliar</span>
+
+                            <!--<a href="{{ route('requisicoes.show', $r) }}"
+                                class="btn btn-xs btn-outline">
+                                Avaliar
+                            </a>-->
+
+                            <a href="{{ route('requisicoes.show', $r) }}"
+                                class="btn btn-success btn-xs">
+                                Avaliar Livro
+                            </a>
+
+                            @endif
+                            @else
+                            <span class="badge badge-warning">Ativa</span>
+                            @endif
                         </td>
+
+
+
                     </tr>
                     @empty
                     <tr>
