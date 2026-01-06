@@ -30,7 +30,6 @@ class ConfirmEntregaRequisicao
                 'dias_decorridos' => $dias,
             ]);
 
-            // Notificar cidadão para avaliar a requisição
             DB::afterCommit(function () use ($requisicao) {
                 app(NotificarCidadaoQuePodeAvaliar::class)->handle($requisicao);
             });
