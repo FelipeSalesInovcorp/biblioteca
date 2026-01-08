@@ -5,21 +5,43 @@
                 📘 {{ $livro->nome }}
             </h2>
 
-            <a href="{{ url()->previous() }}" class="btn btn-ghost">Voltar</a>
+            <!--<a href="{{ url()->previous() }}" class="btn btn-ghost">Voltar
+            </a>-->
+            <a href="{{ route('catalogo') }}" class="btn btn-ghost">
+                <i class="bi bi-arrow-left-circle mr-1"></i>
+                Voltar
+            </a>
+
         </div>
     </x-slot>
 
     <div class="py-8">
 
-        @if (session('success'))
+        <!--@if (session('success'))
         <div class="alert alert-success shadow mb-4">
             <span>{{ session('success') }}</span>
         </div>
+        @endif-->
+
+        @if (session('success'))
+        <div class="alert alert-success shadow mb-4 flex items-center justify-between">
+            <span>{{ session('success') }}</span>
+
+            <a href="{{ route('carrinho.index') }}" class="btn btn-xs btn-outline">Ver carrinho</a>
+        </div>
         @endif
+
 
         @if (session('info'))
         <div class="alert alert-info shadow mb-4">
             <span>{{ session('info') }}</span>
+        </div>
+        @endif
+
+        @if (session('error'))
+        <div class="alert alert-error shadow mb-4 flex items-center justify-between text-white">
+            <span>{{ session('error') }}</span>
+            <a href="{{ route('carrinho.index') }}" class="btn btn-xs btn-outline">Ver carrinho</a>
         </div>
         @endif
 
@@ -61,6 +83,30 @@
                                 <span class="badge badge-ghost">Preço não disponível</span>
                                 @endif
                             </p>
+
+                            <!-- Carrinho -->
+                            @auth
+                            @if(auth()->user()->role === 'cidadao')
+
+                            @if(is_null($livro->preco))
+                            <button type="button"
+                                class="btn btn-sm btn-disabled"
+                                disabled
+                                title="Preço indisponível">
+                                Adicionar ao carrinho
+                            </button>
+                            @else
+                            <form method="POST" action="{{ route('carrinho.add', $livro->id) }}">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-secondary">
+                                    Adicionar ao carrinho
+                                </button>
+                            </form>
+                            @endif
+
+                            @endif
+                            @endauth
+                            <!-- Fim Carrinho -->
 
                             <div class="mt-3 flex items-center gap-2">
                                 @if($livro->estaDisponivel())

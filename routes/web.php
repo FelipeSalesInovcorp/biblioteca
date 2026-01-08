@@ -11,6 +11,7 @@ Use App\Http\Controllers\Admin\GoogleBooksController;
 use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\Admin\AvaliacaoAdminController;
 use App\Http\Controllers\LivroAlertaController;
+use App\Http\Controllers\CarrinhoController;
 
 
 Route::get('/', function () {
@@ -59,6 +60,18 @@ Route::middleware([
 
     // Catálogo de livros
     Route::get('/catalogo', [LivroController::class, 'catalogo'])->name('catalogo');
+
+     // Carrinho (Cidadão)
+    Route::post('/carrinho/adicionar/{livro}', [CarrinhoController::class, 'add'])
+        ->name('carrinho.add');
+
+    Route::get('/carrinho', [CarrinhoController::class, 'index'])
+        ->middleware('auth')
+        ->name('carrinho.index');
+
+    Route::delete('/carrinho/item/{item}', [CarrinhoController::class, 'removeItem'])
+        ->middleware('auth')
+        ->name('carrinho.item.remove');
 
     // Para deixar o catálogo público, basta tirar essa rota do group e deixá-la fora do middleware.
 
