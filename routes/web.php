@@ -14,7 +14,6 @@ use App\Http\Controllers\LivroAlertaController;
 use App\Http\Controllers\CarrinhoController;
 
 
-
 Route::get('/', function () {
     return view('inicio');
 });
@@ -62,7 +61,7 @@ Route::middleware([
     // Catálogo de livros
     Route::get('/catalogo', [LivroController::class, 'catalogo'])->name('catalogo');
 
-    // Carrinho (Cidadão)
+     // Carrinho (Cidadão)
     Route::post('/carrinho/adicionar/{livro}', [CarrinhoController::class, 'add'])
         ->name('carrinho.add');
 
@@ -73,7 +72,6 @@ Route::middleware([
     Route::delete('/carrinho/item/{item}', [CarrinhoController::class, 'removeItem'])
         ->middleware('auth')
         ->name('carrinho.item.remove');
-
 
     // Para deixar o catálogo público, basta tirar essa rota do group e deixá-la fora do middleware.
 
