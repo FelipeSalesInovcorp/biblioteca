@@ -75,10 +75,10 @@ Route::middleware([
 
     // Para deixar o catálogo público, basta tirar essa rota do group e deixá-la fora do middleware.
 
-     // Exportar livros em CSV (abre no Excel)
+    // Exportar livros em CSV (abre no Excel)
     /*Route::get('/livros/export', [LivroController::class, 'exportCsv'])
         ->name('livros.export');*/
-    
+
     // Detalhes da requisição
     Route::get('/requisicoes/{requisicao}', [RequisicaoController::class, 'show'])
     ->name('requisicoes.show');
@@ -102,7 +102,7 @@ Route::middleware([
         Route::post('/google-books/import', [GoogleBooksController::class, 'import'])
             ->name('googlebooks.import');
 
-        // ✅ Avaliações (moderação)
+        // Avaliações (moderação)
         Route::get('/avaliacoes', [AvaliacaoAdminController::class, 'index'])->name('avaliacoes.index');
         Route::get('/avaliacoes/{avaliacao}', [AvaliacaoAdminController::class, 'show'])->name('avaliacoes.show');
         Route::patch('/avaliacoes/{avaliacao}/aprovar', [AvaliacaoAdminController::class, 'aprovar'])->name('avaliacoes.aprovar');
