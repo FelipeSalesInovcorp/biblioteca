@@ -11,6 +11,8 @@ Use App\Http\Controllers\Admin\GoogleBooksController;
 use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\Admin\AvaliacaoAdminController;
 use App\Http\Controllers\LivroAlertaController;
+use App\Http\Controllers\CarrinhoController;
+
 
 
 Route::get('/', function () {
@@ -60,12 +62,25 @@ Route::middleware([
     // Catálogo de livros
     Route::get('/catalogo', [LivroController::class, 'catalogo'])->name('catalogo');
 
+    // Carrinho (Cidadão)
+    Route::post('/carrinho/adicionar/{livro}', [CarrinhoController::class, 'add'])
+        ->name('carrinho.add');
+
+    Route::get('/carrinho', [CarrinhoController::class, 'index'])
+        ->middleware('auth')
+        ->name('carrinho.index');
+
+    Route::delete('/carrinho/item/{item}', [CarrinhoController::class, 'removeItem'])
+        ->middleware('auth')
+        ->name('carrinho.item.remove');
+
+
     // Para deixar o catálogo público, basta tirar essa rota do group e deixá-la fora do middleware.
 
-     // Exportar livros em CSV (abre no Excel)
+    // Exportar livros em CSV (abre no Excel)
     /*Route::get('/livros/export', [LivroController::class, 'exportCsv'])
         ->name('livros.export');*/
-    
+
     // Detalhes da requisição
     Route::get('/requisicoes/{requisicao}', [RequisicaoController::class, 'show'])
     ->name('requisicoes.show');
@@ -89,7 +104,7 @@ Route::middleware([
         Route::post('/google-books/import', [GoogleBooksController::class, 'import'])
             ->name('googlebooks.import');
 
-        // ✅ Avaliações (moderação)
+        // Avaliações (moderação)
         Route::get('/avaliacoes', [AvaliacaoAdminController::class, 'index'])->name('avaliacoes.index');
         Route::get('/avaliacoes/{avaliacao}', [AvaliacaoAdminController::class, 'show'])->name('avaliacoes.show');
         Route::patch('/avaliacoes/{avaliacao}/aprovar', [AvaliacaoAdminController::class, 'aprovar'])->name('avaliacoes.aprovar');
