@@ -23,14 +23,23 @@
         </div>
         @endif-->
 
-        @if (session('success'))
-        <div class="alert alert-success shadow mb-4 flex items-center justify-between">
+        <!--@if (session('success'))
+        <div class="alert alert-success shadow mb-4">
             <span>{{ session('success') }}</span>
 
             {{-- Só adiciona isto quando já existir a rota da página do carrinho --}}
             <a href="{{ route('carrinho.index') }}" class="btn btn-xs btn-outline">Ver carrinho</a>
         </div>
+        @endif-->
+
+        @if (session('success'))
+        <div class="alert alert-success shadow mb-4 flex items-center justify-between">
+            <span>{{ session('success') }}</span>
+
+            <a href="{{ route('carrinho.index') }}" class="btn btn-xs btn-outline">Ver carrinho</a>
+        </div>
         @endif
+
 
         @if (session('info'))
         <div class="alert alert-info shadow mb-4 flex items-center justify-between">
@@ -107,8 +116,6 @@
                             @endif
                             @endauth
                             <!-- Fim Carrinho -->
-
-
 
                             <div class="mt-3 flex items-center gap-2">
                                 @if($livro->estaDisponivel())
