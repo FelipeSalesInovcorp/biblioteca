@@ -12,6 +12,7 @@ use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\Admin\AvaliacaoAdminController;
 use App\Http\Controllers\LivroAlertaController;
 use App\Http\Controllers\CarrinhoController;
+use App\Http\Controllers\CheckoutController;
 
 
 Route::get('/', function () {
@@ -30,11 +31,7 @@ Route::middleware([
     Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
-    // Menus principais
-    /*Route::resource('editoras', EditoraController::class)->except(['show']);
-    Route::resource('autores', AutorController::class)->except(['show']);
-    Route::resource('livros', LivroController::class)->except(['show']);*/
-
+// Gestão de usuários (Admin)
     Route::resource('editoras', EditoraController::class)
     ->except(['show'])
     ->parameters(['editoras' => 'editora']);
@@ -72,6 +69,20 @@ Route::middleware([
     Route::delete('/carrinho/item/{item}', [CarrinhoController::class, 'removeItem'])
         ->middleware('auth')
         ->name('carrinho.item.remove');
+
+    // Checkout (Cidadão)
+    Route::get('/checkout/morada', [CheckoutController::class, 'moradaForm'])
+        ->middleware('auth')
+        ->name('checkout.morada');
+
+    Route::post('/checkout/morada', [CheckoutController::class, 'moradaSubmit'])
+        ->middleware('auth')
+        ->name('checkout.morada.submit');
+
+    Route::get('/checkout/confirmacao', [CheckoutController::class, 'confirmacao'])
+        ->middleware('auth')
+        ->name('checkout.confirmacao');
+    // Fim Carrinho e Checkout
 
     // Para deixar o catálogo público, basta tirar essa rota do group e deixá-la fora do middleware.
 
