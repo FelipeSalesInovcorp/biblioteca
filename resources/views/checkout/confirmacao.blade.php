@@ -35,12 +35,12 @@
 
                         <tbody>
                             @foreach ($encomenda->items as $item)
-                                <tr>
-                                    <td>{{ $item->livro->nome ?? '—' }}</td>
-                                    <td class="text-right">{{ number_format((float)$item->preco_unitario, 2, ',', '.') }} €</td>
-                                    <td class="text-center">{{ $item->quantidade }}</td>
-                                    <td class="text-right">{{ number_format((float)$item->subtotal, 2, ',', '.') }} €</td>
-                                </tr>
+                            <tr>
+                                <td>{{ $item->livro->nome ?? '—' }}</td>
+                                <td class="text-right">{{ number_format((float)$item->preco_unitario, 2, ',', '.') }} €</td>
+                                <td class="text-center">{{ $item->quantidade }}</td>
+                                <td class="text-right">{{ number_format((float)$item->subtotal, 2, ',', '.') }} €</td>
+                            </tr>
                             @endforeach
                         </tbody>
 
@@ -55,19 +55,19 @@
 
                 <div class="mt-4 flex justify-end gap-2">
                     {{-- Stripe no PASSO 4 --}}
-                    <button class="btn btn-primary btn-disabled" disabled title="Pagamento no próximo passo">
+                    <!--<button class="btn btn-primary btn-disabled" disabled title="Pagamento no próximo passo">
                         Pagar com Stripe
-                    </button>
+                    </button>-->
+                    <form method="POST" action="{{ route('checkout.stripe.start', $encomenda->id) }}">
+                        @csrf
+                        <button type="submit" class="btn btn-primary">
+                            Pagar com Stripe
+                        </button>
+                    </form>
+
                 </div>
             </div>
         </div>
 
     </div>
 </x-app-layout>
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-bold text-blue-800">✅ Checkout — Morada de Entrega</h2>
-            <a href="{{ route('carrinho.index') }}" class="btn btn-ghost">Voltar ao carrinho</a>
-        </div>  
-    </x-slot>

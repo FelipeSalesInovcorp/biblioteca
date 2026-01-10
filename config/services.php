@@ -43,5 +43,12 @@ return [
     'timeout' => (int) env('GOOGLE_BOOKS_TIMEOUT', 10),
     ],
 
+    'stripe' => [
+        'secret' => env('STRIPE_SECRET'),
+        'public' => env('STRIPE_PUBLIC'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+    ],
+
+
 
 ];

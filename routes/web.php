@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AvaliacaoAdminController;
 use App\Http\Controllers\LivroAlertaController;
 use App\Http\Controllers\CarrinhoController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\StripeCheckoutController;
 
 
 Route::get('/', function () {
@@ -83,6 +84,21 @@ Route::middleware([
         ->middleware('auth')
         ->name('checkout.confirmacao');
     // Fim Carrinho e Checkout
+
+    // Stripe Checkout
+    Route::post('/checkout/stripe/{encomenda}', [StripeCheckoutController::class, 'start'])
+        ->middleware('auth')
+        ->name('checkout.stripe.start');
+
+    Route::get('/checkout/stripe/success', [StripeCheckoutController::class, 'success'])
+        ->middleware('auth')
+        ->name('checkout.stripe.success');
+
+    Route::get('/checkout/stripe/cancel', [StripeCheckoutController::class, 'cancel'])
+        ->middleware('auth')
+        ->name('checkout.stripe.cancel');
+
+
 
     // Para deixar o catálogo público, basta tirar essa rota do group e deixá-la fora do middleware.
 
