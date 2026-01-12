@@ -14,6 +14,7 @@ use App\Http\Controllers\LivroAlertaController;
 use App\Http\Controllers\CarrinhoController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\StripeCheckoutController;
+use App\Http\Controllers\Admin\EncomendaAdminController;
 
 
 Route::get('/', function () {
@@ -98,8 +99,6 @@ Route::middleware([
         ->middleware('auth')
         ->name('checkout.stripe.cancel');
 
-
-
     // Para deixar o catálogo público, basta tirar essa rota do group e deixá-la fora do middleware.
 
     // Exportar livros em CSV (abre no Excel)
@@ -142,5 +141,11 @@ Route::middleware([
     // Alertas de disponibilidade de livro (Cidadão)
     Route::post('/livros/{livro}/alertas', [LivroAlertaController::class, 'store'])
         ->name('livros.alertas.store');
+
+    // Administração de encomendas (Admin)
+    Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/encomendas', [EncomendaAdminController::class, 'index'])
+            ->name('encomendas.index');
+    });
 
 });
