@@ -22,6 +22,7 @@
                     </x-nav-link>
 
                     @if(auth()->user()->isAdmin())
+                    <!-- Links adicionais apenas para admin -->
                     <x-nav-link href="{{ route('requisicoes.index') }}" :active="request()->routeIs('requisicoes.*')">
                         <span class="flex items-center gap-2">
                             {{ __('Requisições') }}
@@ -39,9 +40,16 @@
                         {{ __('Google Books') }}
                     </x-nav-link>
 
+                    <!-- Novo link Avaliações apenas para admin -->
                     <x-nav-link href="{{ route('admin.avaliacoes.index') }}" :active="request()->routeIs('admin.avaliacoes.*')">
                         {{ __('Avaliações') }}
                     </x-nav-link>
+
+                    <!-- Novo link Encomendas apenas para admin -->
+                    <x-nav-link href="{{ route('admin.encomendas.index') }}" :active="request()->routeIs('admin.encomendas.*')">
+                        {{ __('Encomendas') }}
+                    </x-nav-link>
+
 
                     @else
                     <x-nav-link href="{{ route('requisicoes.minhas') }}" :active="request()->routeIs('requisicoes.minhas')">

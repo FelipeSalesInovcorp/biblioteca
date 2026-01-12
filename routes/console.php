@@ -10,3 +10,5 @@ Artisan::command('inspire', function () {
 
 
 Schedule::command('requisicoes:send-reminders')->dailyAt('15:00');
+
+Schedule::command('carrinho:notificar-abandonados --hours=1')->everyTenMinutes();
