@@ -37,6 +37,7 @@ class Encomenda extends Model
     protected $casts = [
         'total'   => 'decimal:2',
         'pago_em' => 'datetime',
+        'confirmacao_email_sent_at' => 'datetime',
     ];
 
     // Relação: Encomenda pertence a um utilizador

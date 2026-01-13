@@ -2,9 +2,11 @@
 
 namespace App\Actions\Stripe;
 
+use App\Mail\EncomendaConfirmadaMail;
 use App\Models\Carrinho;
 use App\Models\Encomenda;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\ValidationException;
 use Stripe\Checkout\Session;
 use Stripe\Stripe;
@@ -44,15 +46,27 @@ class ConfirmarPagamentoStripe
         }
 
         // Se já está paga, idempotência
-        if ($encomenda->estado === 'paga') {
+        if ($encomenda->estado === Encomenda::ESTADO_PAGA) {
             return $encomenda;
         }
 
         return DB::transaction(function () use ($encomenda) {
             $encomenda->update([
-                'estado' => 'paga',
+                'estado' => Encomenda::ESTADO_PAGA,
                 'pago_em' => now(),
             ]);
+
+            // ✅ Email de confirmação (1x, idempotente)
+            if (is_null($encomenda->confirmacao_email_sent_at)) {
+                $encomenda->loadMissing('user', 'items.livro');
+
+                Mail::to($encomenda->user->email)
+                    ->queue(new EncomendaConfirmadaMail($encomenda));
+
+                $encomenda->forceFill([
+                    'confirmacao_email_sent_at' => now(),
+                ])->save();
+            }
 
             // Fechar carrinho ativo do user (opção simples)
             $carrinho = Carrinho::where('user_id', $encomenda->user_id)
@@ -61,8 +75,6 @@ class ConfirmarPagamentoStripe
 
             if ($carrinho) {
                 $carrinho->update(['estado' => 'convertido']);
-                // opcional: limpar itens
-                // $carrinho->items()->delete();
             }
 
             return $encomenda;

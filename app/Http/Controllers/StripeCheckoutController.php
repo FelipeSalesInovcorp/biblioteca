@@ -37,15 +37,17 @@ class StripeCheckoutController extends Controller
         }
 
         try {
-            app(ConfirmarPagamentoStripe::class)->execute($request->user()->id, $sessionId);
-            // Voltar à confirmação (onde mostras o resumo)
-            return redirect()->route('checkout.confirmacao')
+            $encomenda = app(\App\Actions\Stripe\ConfirmarPagamentoStripe::class)
+                ->execute($request->user()->id, $sessionId);
+
+            return redirect()->route('checkout.sucesso', $encomenda)
                 ->with('success', 'Pagamento confirmado! Encomenda paga com sucesso.');
         } catch (ValidationException $e) {
             $msg = collect($e->errors())->flatten()->first() ?? 'Não foi possível confirmar o pagamento.';
             return redirect()->route('carrinho.index')->with('error', $msg);
         }
     }
+
 
     public function cancel()
     {

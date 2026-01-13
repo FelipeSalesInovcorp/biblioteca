@@ -99,6 +99,12 @@ Route::middleware([
         ->middleware('auth')
         ->name('checkout.stripe.cancel');
 
+    Route::get('/checkout/sucesso/{encomenda}', [CheckoutController::class, 'sucesso'])
+    ->middleware('auth')
+    ->name('checkout.sucesso');
+    // Fim Stripe Checkout
+
+
     // Para deixar o catálogo público, basta tirar essa rota do group e deixá-la fora do middleware.
 
     // Exportar livros em CSV (abre no Excel)
