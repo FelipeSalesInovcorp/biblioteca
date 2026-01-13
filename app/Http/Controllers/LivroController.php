@@ -9,6 +9,7 @@ use App\Models\Avaliacao;
 use Illuminate\Http\Request;
 use App\Http\Requests\LivroStoreRequest;
 use App\Http\Requests\LivroUpdateRequest;
+use App\Models\Carrinho;
 use App\Actions\Livros\CreateLivro;
 use App\Actions\Livros\UpdateLivro;
 use App\Services\Exports\LivrosCsvExporter;
@@ -62,8 +63,6 @@ class LivroController extends Controller
     {
         $this->authorize('viewAny', Livro::class);
 
-        //$query = Livro::with(['editora', 'autores', 'requisicoes']);
-
         $query = Livro::with(['editora', 'autores', 'requisicoes'])
             ->withCount(['avaliacoes as avaliacoes_count' => function ($q) {
                 $q->where('estado', Avaliacao::ESTADO_ATIVA);
@@ -72,21 +71,36 @@ class LivroController extends Controller
         // Pesquisa simples por nome ou ISBN
         if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
-            $q->where('nome', 'like', "%{$search}%")
-                ->orWhere('isbn', 'like', "%{$search}%");
-        });
-    }
+                $q->where('nome', 'like', "%{$search}%")
+                    ->orWhere('isbn', 'like', "%{$search}%");
+            });
+        }
 
         // Filtro por editora
         if ($editoraId = $request->input('editora_id')) {
-        $query->where('editora_id', $editoraId);
-    }
+            $query->where('editora_id', $editoraId);
+        }
 
         // Ordenar por nome para o catálogo
         $livros = $query->orderBy('nome')->paginate(6)->withQueryString();
         $editoras = Editora::orderBy('nome')->get();
 
-        return view('livros.catalogo', compact('livros', 'editoras'));
+        // ✅ PASSO 3: livros que já estão no carrinho (para badge "No carrinho")
+        $livrosNoCarrinho = [];
+
+        if (auth()->check() && auth()->user()->isCidadao()) {
+            $carrinho = Carrinho::query()
+                ->where('user_id', auth()->id())
+                ->where('estado', 'ativo')
+                ->with('items:id,carrinho_id,livro_id')
+                ->first();
+
+            $livrosNoCarrinho = $carrinho
+                ? $carrinho->items->pluck('livro_id')->unique()->values()->all()
+                : [];
+        }
+
+        return view('livros.catalogo', compact('livros', 'editoras', 'livrosNoCarrinho'));
     }
     // Fim do catalogo de livros
 

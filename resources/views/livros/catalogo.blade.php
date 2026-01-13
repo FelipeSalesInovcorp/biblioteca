@@ -67,7 +67,14 @@
             @if ($livros->count())
             <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($livros as $livro)
-                <div class="card bg-base-100 shadow hover:shadow-lg transition flex flex-col">
+                <div class="card bg-base-100 shadow hover:shadow-lg transition flex flex-col relative">
+
+                    @if(in_array($livro->id, $livrosNoCarrinho ?? []))
+                    <span class="badge badge-success absolute top-2 right-2 z-10">
+                        No carrinho
+                    </span>
+                    @endif
+
                     @if ($livro->imagem_capa)
                     <figure class="px-4 pt-4">
                         <img src="{{ asset('storage/'.$livro->imagem_capa) }}"
@@ -167,6 +174,7 @@
                 </div>
                 @endforeach
             </div>
+            {{-- fim grelha de cards --}}
 
             <div class="mt-6">
                 {{ $livros->links() }}
