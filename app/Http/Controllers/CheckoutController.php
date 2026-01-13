@@ -59,4 +59,13 @@ class CheckoutController extends Controller
             'encomenda' => $encomenda,
         ]);
     }
+
+    public function sucesso(Encomenda $encomenda)
+    {
+        // segurança: só o dono ou admin pode ver
+        abort_unless(auth()->id() === $encomenda->user_id || auth()->user()->isAdmin(), 403);
+
+        return view('checkout.sucesso', compact('encomenda'));
+    }
+
 }
