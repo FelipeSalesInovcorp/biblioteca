@@ -19,6 +19,7 @@ class Livro extends Model
         'bibliografia',
         'imagem_capa',
         'preco',
+        'stock',
     ];
 
     // cifrar imagem_capa (não precisamos pesquisar por isso)
@@ -26,6 +27,7 @@ class Livro extends Model
         'bibliografia' => 'encrypted',
         'imagem_capa' => 'encrypted',
         'preco'        => 'decimal:2',
+        'stock'        => 'integer',
     ];
     
     // Relação com editora
@@ -59,7 +61,19 @@ class Livro extends Model
 
     public function estaDisponivel(): bool
     {
-        return ! $this->requisicoes()->whereNull('data_entrega_real')->exists();
+        //return ! $this->requisicoes()->whereNull('data_entrega_real')->exists();
+
+        // Se stock for 0 (ou null por algum motivo), não está disponível
+        if (($this->stock ?? 0) <= 0) {
+            return false;
+        }
+
+        $ativas = $this->requisicoes()
+            ->whereNull('data_entrega_real')
+            ->count();
+
+        return $ativas < $this->stock;
+
     }
 
     public function avaliacoes()
