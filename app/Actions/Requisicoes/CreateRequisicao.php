@@ -29,13 +29,21 @@ class CreateRequisicao
             }
 
             // 2) Livro tem de estar disponível (sem requisição ativa)
-            $livro = Livro::with('requisicoes')->findOrFail($livroId);
+            $livro = Livro::findOrFail($livroId);
 
-            $emRequisicao = $livro->requisicoes()
+            // 2.1) Sem stock => bloqueia requisição
+            if (($livro->stock ?? 0) <= 0) {
+                throw ValidationException::withMessages([
+                    'livro_id' => 'Não existe stock disponível para este livro.',
+                ]);
+            }
+
+            // 2.2) Se requisições ativas >= stock => indisponível
+            $ativasLivro = Requisicao::where('livro_id', $livro->id)
                 ->whereNull('data_entrega_real')
-                ->exists();
+                ->count();
 
-            if ($emRequisicao) {
+            if ($ativasLivro >= $livro->stock) {
                 throw ValidationException::withMessages([
                     'livro_id' => 'Este livro já está em processo de requisição.',
                 ]);
