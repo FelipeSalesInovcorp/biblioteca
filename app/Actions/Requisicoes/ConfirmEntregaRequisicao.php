@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use App\Actions\Livros\NotificarLivroDisponivel;
 use App\Actions\Avaliacoes\NotificarCidadaoQuePodeAvaliar;
+use App\Actions\Logs\LogActivity;
 
 class ConfirmEntregaRequisicao
 {
@@ -30,6 +31,17 @@ class ConfirmEntregaRequisicao
                 'dias_decorridos' => $dias,
             ]);
 
+            // Log
+            $requisicao->loadMissing('livro');
+
+            LogActivity::run(
+                module: 'Requisicoes',
+                change: "Confirmou entrega da requisição #{$requisicao->numero_sequencial} (livro '{$requisicao->livro->nome}')",
+                objectId: $requisicao->id,
+                userId: $requisicao->user_id
+            );
+
+            // Notificar cidadão que pode avaliar
             DB::afterCommit(function () use ($requisicao) {
                 app(NotificarCidadaoQuePodeAvaliar::class)->handle($requisicao);
             });
