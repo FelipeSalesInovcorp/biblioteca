@@ -4,9 +4,10 @@ namespace App\Actions\Requisicoes;
 
 use App\Models\Livro;
 use App\Models\Requisicao;
+use App\Models\User;
 use App\Mail\RequisicaoConfirmadaAdmin;
 use App\Mail\RequisicaoConfirmadaCidadao;
-use App\Models\User;
+use App\Actions\Logs\LogActivity;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Mail;
@@ -66,6 +67,14 @@ class CreateRequisicao
             ]);
 
             $requisicao->load(['user', 'livro']);
+            
+            // 5) Log
+            LogActivity::run(
+                module: 'Requisicoes',
+                change: "Criou requisição #{$requisicao->numero_sequencial} para o livro '{$requisicao->livro->nome}'",
+                objectId: $requisicao->id,
+                userId: $userId
+            );
 
             // Email para o cidadão (queue imediato)
             Mail::to($requisicao->user->email)
