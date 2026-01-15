@@ -7,7 +7,8 @@ use App\Http\Controllers\EditoraController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\RequisicaoController;
-Use App\Http\Controllers\Admin\GoogleBooksController;
+use App\Http\Controllers\Admin\LogController;
+use App\Http\Controllers\Admin\GoogleBooksController;
 use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\Admin\AvaliacaoAdminController;
 use App\Http\Controllers\LivroAlertaController;
@@ -139,6 +140,9 @@ Route::middleware([
         Route::get('/avaliacoes/{avaliacao}', [AvaliacaoAdminController::class, 'show'])->name('avaliacoes.show');
         Route::patch('/avaliacoes/{avaliacao}/aprovar', [AvaliacaoAdminController::class, 'aprovar'])->name('avaliacoes.aprovar');
         Route::patch('/avaliacoes/{avaliacao}/recusar', [AvaliacaoAdminController::class, 'recusar'])->name('avaliacoes.recusar');
+
+        // Logs do sistema
+        Route::get('/logs', [LogController::class, 'index'])->name('logs.index');
     });
 
     Route::post('/requisicoes/{requisicao}/avaliacoes', [AvaliacaoController::class, 'store'])
