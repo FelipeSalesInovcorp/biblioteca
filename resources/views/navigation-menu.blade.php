@@ -73,6 +73,7 @@
                     </x-nav-link>
 
 
+                    
 
 
                     <div x-data="{ openCart: false }" class="relative inline-flex items-center">
