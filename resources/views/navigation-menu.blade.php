@@ -50,6 +50,14 @@
                         {{ __('Encomendas') }}
                     </x-nav-link>
 
+                    <!-- Novo link Logs apenas para admin -->
+                    @if(auth()->user()->role === 'admin')
+                    <x-nav-link href="{{ route('admin.logs.index') }}" :active="request()->routeIs('admin.logs.*')">
+                        Logs
+                    </x-nav-link>
+                    @endif
+
+
 
                     @else
                     <x-nav-link href="{{ route('requisicoes.minhas') }}" :active="request()->routeIs('requisicoes.minhas')">
@@ -63,6 +71,7 @@
                             @endif
                         </span>
                     </x-nav-link>
+
 
                     
 

@@ -36,6 +36,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
+            'role' => 'cidadao',
         ];
     }
 
@@ -69,4 +70,17 @@ class UserFactory extends Factory
             'ownedTeams'
         );
     }
+    
+    // Define estados customizados para os papéis de usuário
+    public function admin(): static
+    {
+        return $this->state(fn() => ['role' => 'admin']);
+    }
+
+    // Define estado para cidadão
+    public function cidadao(): static
+    {
+        return $this->state(fn() => ['role' => 'cidadao']);
+    }
+
 }
