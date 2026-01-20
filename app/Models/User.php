@@ -6,6 +6,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
@@ -84,4 +86,32 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Avaliacao::class);
     }
+
+    // Relationships with Conversation
+
+    //  todas as conversas das quais o usuário participa.
+    public function isActive(): bool
+    {
+        return ($this->status ?? 'active') === 'active';
+    }
+    
+    // todas as conversas das quais o usuário participa.
+    public function conversations(): BelongsToMany
+    {
+        return $this->belongsToMany(Conversation::class)
+            ->withPivot(['role', 'joined_at', 'last_read_at']);
+    }
+
+    // todas as mensagens enviadas pelo usuário.
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    // todas as salas criadas pelo usuário.
+    public function roomsCreated(): HasMany
+    {
+        return $this->hasMany(Room::class, 'created_by');
+    }
+
 }
