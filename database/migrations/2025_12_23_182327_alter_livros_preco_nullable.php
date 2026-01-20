@@ -114,3 +114,4 @@ return new class extends Migration
         Schema::rename('livros_temp', 'livros');
     }
 };
+

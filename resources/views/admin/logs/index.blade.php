@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Logs
+        <h2 class="text-2xl font-bold text-center text-base-content leading-tight text-blue-800">
+            💻 Logs do Sistema
         </h2>
     </x-slot>
 
