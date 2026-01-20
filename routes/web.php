@@ -9,7 +9,6 @@ use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\RequisicaoController;
 use App\Http\Controllers\Admin\LogController;
 use App\Http\Controllers\Admin\GoogleBooksController;
-Use App\Http\Controllers\Admin\GoogleBooksController;
 use App\Http\Controllers\AvaliacaoController;
 use App\Http\Controllers\Admin\AvaliacaoAdminController;
 use App\Http\Controllers\LivroAlertaController;
