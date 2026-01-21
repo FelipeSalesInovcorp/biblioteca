@@ -5,9 +5,13 @@ namespace App\Providers;
 use App\Models\Livro;
 use App\Models\Autor;
 use App\Models\Editora;
+use App\Models\Room;
+use App\Models\Conversation;
 use App\Policies\LivroPolicy;
 use App\Policies\AutorPolicy;
 use App\Policies\EditoraPolicy;
+use App\Policies\RoomPolicy;
+use App\Policies\ConversationPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
@@ -20,6 +24,8 @@ class AuthServiceProvider extends ServiceProvider
         Autor::class   => AutorPolicy::class,
         Editora::class => EditoraPolicy::class,
         \App\Models\Requisicao::class => \App\Policies\RequisicaoPolicy::class,
+        Conversation::class => ConversationPolicy::class,
+        Room::class => RoomPolicy::class,
     ];
 
     /**

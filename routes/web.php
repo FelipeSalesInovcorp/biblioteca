@@ -16,7 +16,10 @@ use App\Http\Controllers\CarrinhoController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\StripeCheckoutController;
 use App\Http\Controllers\Admin\EncomendaAdminController;
-
+use App\Http\Controllers\Chat\DirectMessageController;
+use App\Http\Controllers\Chat\ConversationController;
+use App\Http\Controllers\Chat\MessageController;
+use App\Http\Controllers\Chat\InboxController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -158,4 +161,34 @@ Route::middleware([
             ->name('encomendas.index');
     });
 
+    // Chat Routes
+    /*Route::prefix('chat')->name('chat.')->group(function () {
+
+        Route::post('/dm/{user}', [DirectMessageController::class, 'store'])
+            ->name('dm.store');
+
+        // página da conversa (placeholder por agora)
+        Route::get('/conversations/{conversation}', [ConversationController::class, 'show'])
+            ->name('conversations.show');
+
+        Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store'])
+            ->name('messages.store');
+    });*/
+
+    Route::prefix('chat')->name('chat.')->group(function () {
+
+        Route::get('/inbox', [InboxController::class, 'index'])
+            ->name('inbox');
+
+        Route::post('/dm/{user}', [DirectMessageController::class, 'store'])
+            ->name('dm.store');
+
+        // página da conversa (placeholder por agora)
+        Route::get('/conversations/{conversation}', [ConversationController::class, 'show'])
+            ->name('conversations.show');
+
+        Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store'])
+            ->name('messages.store');
+    });
+    
 });
