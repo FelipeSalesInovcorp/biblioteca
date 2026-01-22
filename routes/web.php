@@ -195,6 +195,10 @@ Route::middleware([
         Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
         Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
         Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
-    });
 
+        // Rotas para gerenciar membros da sala
+        Route::post('/rooms/{room}/invite', [RoomController::class, 'invite'])->name('rooms.invite');
+        Route::post('/rooms/{room}/remove', [RoomController::class, 'remove'])->name('rooms.remove');
+    });
+    
 });

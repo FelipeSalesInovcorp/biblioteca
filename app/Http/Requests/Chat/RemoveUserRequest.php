@@ -11,7 +11,7 @@ class RemoveUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class RemoveUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            //  regra de validação para ID do usuário a ser removido
+            
+            'user_id' => ['required', 'integer', 'exists:users,id'],
         ];
     }
 }

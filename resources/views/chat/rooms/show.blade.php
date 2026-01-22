@@ -9,20 +9,65 @@
     <div class="py-8">
         <div class="max-w-4xl mx-auto space-y-6">
 
+            {{-- Convidar membros (apenas admin) --}}
+            @can('invite', $room)
+                <div class="bg-base-100 shadow rounded-box p-4">
+                    <h3 class="font-semibold">Convidar membros</h3>
+
+                    <form method="POST" action="{{ route('chat.rooms.invite', $room) }}" class="mt-3 space-y-3">
+                        @csrf
+
+                        <div class="space-y-2">
+                            @forelse($availableUsers as $u)
+                                <label class="flex items-center gap-2 text-sm">
+                                    <input type="checkbox" name="user_ids[]" value="{{ $u->id }}">
+                                    <span>{{ $u->name }} ({{ $u->email }})</span>
+                                </label>
+                            @empty
+                                <p class="text-sm text-gray-500">Não há utilizadores para convidar.</p>
+                            @endforelse
+                        </div>
+
+                        @if($availableUsers->count())
+                            <button class="px-4 py-2 bg-blue-600 text-white rounded" type="submit">
+                                Convidar selecionados
+                            </button>
+                        @endif
+                    </form>
+                </div>
+            @endcan
+
+            {{-- Membros --}}
             <div class="bg-base-100 shadow rounded-box p-4">
                 <h3 class="font-semibold">Membros</h3>
                 <ul class="list-disc ml-6 text-sm mt-2">
                     @foreach($conversation->users as $member)
-                        <li>
-                            {{ $member->name }} ({{ $member->email }})
-                            @if($member->pivot?->role)
-                                <span class="text-gray-500">— {{ $member->pivot->role }}</span>
-                            @endif
+                        <li class="flex items-center gap-2">
+                            <span>
+                                {{ $member->name }} ({{ $member->email }})
+                                @if($member->pivot?->role)
+                                    <span class="text-gray-500">— {{ $member->pivot->role }}</span>
+                                @endif
+                            </span>
+
+                            {{-- Remover (exceto owner) --}}
+                            @can('remove', $room)
+                                @if(($member->pivot?->role ?? null) !== 'owner')
+                                    <form method="POST" action="{{ route('chat.rooms.remove', $room) }}" style="display:inline">
+                                        @csrf
+                                        <input type="hidden" name="user_id" value="{{ $member->id }}">
+                                        <button class="text-red-600 underline text-sm" type="submit">
+                                            Remover
+                                        </button>
+                                    </form>
+                                @endif
+                            @endcan
                         </li>
                     @endforeach
                 </ul>
             </div>
 
+            {{-- Mensagens --}}
             <div class="bg-base-100 shadow rounded-box p-4">
                 <h3 class="font-semibold">Mensagens</h3>
 
@@ -41,6 +86,7 @@
                 </div>
             </div>
 
+            {{-- Enviar mensagem --}}
             <div class="bg-base-100 shadow rounded-box p-4">
                 <h3 class="font-semibold">Enviar mensagem</h3>
 
