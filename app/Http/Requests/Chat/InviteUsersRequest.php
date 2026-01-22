@@ -11,7 +11,8 @@ class InviteUsersRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        //return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,9 @@ class InviteUsersRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            // Exemplo de regra de validação para IDs de usuários a serem convidados
+            'user_ids' => ['required', 'array', 'min:1'],
+            'user_ids.*' => ['integer', 'distinct', 'exists:users,id'],
         ];
     }
 }
