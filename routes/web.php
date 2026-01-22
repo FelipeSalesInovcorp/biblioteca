@@ -20,6 +20,7 @@ use App\Http\Controllers\Chat\DirectMessageController;
 use App\Http\Controllers\Chat\ConversationController;
 use App\Http\Controllers\Chat\MessageController;
 use App\Http\Controllers\Chat\InboxController;
+use App\Http\Controllers\Chat\RoomController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -189,6 +190,11 @@ Route::middleware([
 
         Route::post('/conversations/{conversation}/messages', [MessageController::class, 'store'])
             ->name('messages.store');
+
+        // Rotas para salas de chat
+        Route::get('/rooms/create', [RoomController::class, 'create'])->name('rooms.create');
+        Route::post('/rooms', [RoomController::class, 'store'])->name('rooms.store');
+        Route::get('/rooms/{room}', [RoomController::class, 'show'])->name('rooms.show');
     });
-    
+
 });
