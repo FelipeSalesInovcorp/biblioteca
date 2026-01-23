@@ -38,26 +38,48 @@ class RoomController extends Controller
 
     public function show(Room $room)
     {
-        // Quem pode ver? por agora: participantes (via ConversationPolicy view)
         Gate::authorize('view', $room->conversation);
 
+        $user = request()->user();
+
+        // carregar dados da sala ativa
         $room->load(['conversation.users', 'conversation.messages.user']);
 
-        // Usuários que podem ser convidados (não estão na conversa)
-        $memberIds = $room->conversation->users->pluck('id');
+        // Sidebar: Rooms onde o user é membro
+        $rooms = \App\Models\Room::query()
+            ->whereHas('conversation.users', function ($q) use ($user) {
+                $q->where('users.id', $user->id);
+            })
+            ->with(['conversation'])
+            ->orderBy('name')
+            ->get();
 
+        // Sidebar: DMs do user
+        $directConversations = \App\Models\Conversation::query()
+            ->where('type', 'direct')
+            ->whereHas('users', function ($q) use ($user) {
+                $q->where('users.id', $user->id);
+            })
+            ->with(['users'])
+            ->orderByDesc('updated_at')
+            ->get();
+
+        // Usuários que podem ser convidados (não estão na conversa) — mantém, porque já tens Invite/Remove
+        $memberIds = $room->conversation->users->pluck('id');
         $availableUsers = \App\Models\User::query()
             ->whereNotIn('id', $memberIds)
             ->orderBy('name')
             ->get();
 
-        return view('chat.rooms.show', [
-            'room' => $room,
-            'conversation' => $room->conversation,
-            'availableUsers' => $availableUsers,
+        return view('chat.app', [
+            'rooms' => $rooms,
+            'directConversations' => $directConversations,
+            'activeConversation' => $room->conversation,
+            'activeRoom' => $room,
+            'availableUsers' => $availableUsers, // (por enquanto pode ficar sem uso no painel)
         ]);
     }
-    
+
     // Gerenciar membros da sala
     public function invite(Room $room, InviteUsersRequest $request, InviteUsersToRoom $action)
     {
