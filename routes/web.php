@@ -21,6 +21,7 @@ use App\Http\Controllers\Chat\ConversationController;
 use App\Http\Controllers\Chat\MessageController;
 use App\Http\Controllers\Chat\InboxController;
 use App\Http\Controllers\Chat\RoomController;
+use App\Http\Controllers\Chat\HomeController;
 
 Route::get('/', function () {
     return view('inicio');
@@ -199,6 +200,9 @@ Route::middleware([
         // Rotas para gerenciar membros da sala
         Route::post('/rooms/{room}/invite', [RoomController::class, 'invite'])->name('rooms.invite');
         Route::post('/rooms/{room}/remove', [RoomController::class, 'remove'])->name('rooms.remove');
+
+        // Rota para a página inicial do chat
+        Route::get('/', [HomeController::class, 'index'])->name('home');
     });
     
 });
