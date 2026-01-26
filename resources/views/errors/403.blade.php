@@ -1,50 +1,34 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="text-2xl font-bold text-base-content leading-tight text-blue-800">
-            💬 Chat — Inbox
-        </h2>
-    </x-slot>
+    <div class="min-h-[60vh] flex items-center justify-center">
+        <div class="max-w-md text-center space-y-4">
+            <div class="text-6xl">🚫</div>
 
-    <div class="py-8">
-        <div class="max-w-4xl mx-auto space-y-4">
+            <h1 class="text-2xl font-bold text-gray-800">
+                Acesso não autorizado
+            </h1>
 
-            <div class="bg-base-100 shadow rounded-box p-4">
-                <h3 class="font-semibold mb-3">Utilizadores</h3>
+            <p class="text-gray-600">
+                Não tens permissão para aceder a esta conversa ou sala.
+            </p>
 
-                <ul class="list-disc ml-6 text-sm space-y-2">
-                    @foreach($users as $u)
+            <div class="pt-4 flex justify-center gap-4">
+                <a
+                    href="{{ route('chat.home') }}"
+                    class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                    Voltar ao Chat
+                </a>
 
-                        <li class="flex items-center justify-between gap-4">
-    <div class="flex items-center gap-3">
-        <img
-            src="{{ $u->profile_photo_url }}"
-            alt="{{ $u->name }}"
-            class="w-8 h-8 rounded-full object-cover"
-        />
-
-        <span class="text-sm">
-            {{ $u->name }}
-            <span class="text-gray-500">({{ $u->email }})</span>
-        </span>
-    </div>
-
-    <form method="POST" action="{{ route('chat.dm.store', $u) }}">
-        @csrf
-        <button class="text-blue-600 underline text-sm" type="submit">
-            Abrir DM
-        </button>
-    </form>
-</li>
-
-
-                    @endforeach
-                </ul>
+                <a
+                    href="{{ route('dashboard') }}"
+                    class="px-4 py-2 border rounded hover:bg-gray-100"
+                >
+                    Ir para Home
+                </a>
             </div>
-
         </div>
     </div>
 </x-app-layout>
-
 
 <footer class="footer sm:footer-horizontal bg-blue-700 text-white p-10">
     <aside>
