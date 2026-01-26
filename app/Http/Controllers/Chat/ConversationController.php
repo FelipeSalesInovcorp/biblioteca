@@ -12,42 +12,22 @@ class ConversationController extends Controller
     {
         Gate::authorize('view', $conversation);
 
-        /*$conversation->load(['users', 'messages.user']);
+        $user = request()->user();
 
-        return view('chat.conversation', [
-            'conversation' => $conversation,
-        ]);*/
+        // marca como lida ao abrir (para desaparecer o ponto azul)
+        $conversation->users()->updateExistingPivot($user->id, [
+            'last_read_at' => now(),
+        ]);
 
-    $user = request()->user();
+        $conversation->load(['users', 'messages.user']);
 
-    // carregar dados da conversa ativa
-    $conversation->load(['users', 'messages.user']);
+        $sidebar = app(\App\Services\ChatSidebarBuilder::class)->build($user);
 
-    // Sidebar: Rooms onde o user é membro
-    $rooms = \App\Models\Room::query()
-        ->whereHas('conversation.users', function ($q) use ($user) {
-            $q->where('users.id', $user->id);
-        })
-        ->with(['conversation'])
-        ->orderBy('name')
-        ->get();
-
-    // Sidebar: DMs do user
-    $directConversations = \App\Models\Conversation::query()
-        ->where('type', 'direct')
-        ->whereHas('users', function ($q) use ($user) {
-            $q->where('users.id', $user->id);
-        })
-        ->with(['users'])
-        ->orderByDesc('updated_at')
-        ->get();
-
-    return view('chat.app', [
-        'rooms' => $rooms,
-        'directConversations' => $directConversations,
-        'activeConversation' => $conversation,
-        'activeRoom' => null,
-    ]);
-
+        return view('chat.app', [
+            'rooms' => $sidebar['rooms'],
+            'directConversations' => $sidebar['directConversations'],
+            'activeConversation' => $conversation,
+            'activeRoom' => null,
+        ]);
     }
 }

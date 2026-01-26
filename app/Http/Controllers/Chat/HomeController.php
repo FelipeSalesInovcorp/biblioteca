@@ -13,28 +13,11 @@ class HomeController extends Controller
     {
         $user = $request->user();
 
-        // Rooms onde o user é membro (via conversation_user)
-        $rooms = Room::query()
-            ->whereHas('conversation.users', function ($q) use ($user) {
-                $q->where('users.id', $user->id);
-            })
-            ->with(['conversation'])
-            ->orderBy('name')
-            ->get();
-
-        // DMs do user
-        $directConversations = Conversation::query()
-            ->where('type', 'direct')
-            ->whereHas('users', function ($q) use ($user) {
-                $q->where('users.id', $user->id);
-            })
-            ->with(['users'])
-            ->orderByDesc('updated_at')
-            ->get();
+        $sidebar = app(\App\Services\ChatSidebarBuilder::class)->build($user);
 
         return view('chat.app', [
-            'rooms' => $rooms,
-            'directConversations' => $directConversations,
+            'rooms' => $sidebar['rooms'],
+            'directConversations' => $sidebar['directConversations'],
             'activeConversation' => null,
             'activeRoom' => null,
         ]);

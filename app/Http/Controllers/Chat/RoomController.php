@@ -42,41 +42,28 @@ class RoomController extends Controller
 
         $user = request()->user();
 
-        // carregar dados da sala ativa
+        // marca como lida ao abrir
+        $room->conversation->users()->updateExistingPivot($user->id, [
+            'last_read_at' => now(),
+        ]);
+
         $room->load(['conversation.users', 'conversation.messages.user']);
 
-        // Sidebar: Rooms onde o user é membro
-        $rooms = \App\Models\Room::query()
-            ->whereHas('conversation.users', function ($q) use ($user) {
-                $q->where('users.id', $user->id);
-            })
-            ->with(['conversation'])
-            ->orderBy('name')
-            ->get();
-
-        // Sidebar: DMs do user
-        $directConversations = \App\Models\Conversation::query()
-            ->where('type', 'direct')
-            ->whereHas('users', function ($q) use ($user) {
-                $q->where('users.id', $user->id);
-            })
-            ->with(['users'])
-            ->orderByDesc('updated_at')
-            ->get();
-
-        // Usuários que podem ser convidados (não estão na conversa) — mantém, porque já tens Invite/Remove
+        // usuários disponíveis para convidar
         $memberIds = $room->conversation->users->pluck('id');
         $availableUsers = \App\Models\User::query()
             ->whereNotIn('id', $memberIds)
             ->orderBy('name')
             ->get();
 
+        $sidebar = app(\App\Services\ChatSidebarBuilder::class)->build($user);
+
         return view('chat.app', [
-            'rooms' => $rooms,
-            'directConversations' => $directConversations,
+            'rooms' => $sidebar['rooms'],
+            'directConversations' => $sidebar['directConversations'],
             'activeConversation' => $room->conversation,
             'activeRoom' => $room,
-            'availableUsers' => $availableUsers, // (por enquanto pode ficar sem uso no painel)
+            'availableUsers' => $availableUsers,
         ]);
     }
 

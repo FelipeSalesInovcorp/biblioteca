@@ -21,6 +21,11 @@
                         {{ __('Home') }}
                     </x-nav-link>
 
+                    <x-nav-link href="{{ route('chat.home') }}" :active="request()->routeIs('chat.*')">
+                        {{ __('Chat') }}
+                    </x-nav-link>
+
+
                     @if(auth()->user()->isAdmin())
                     <!-- Links adicionais apenas para admin -->
                     <x-nav-link href="{{ route('requisicoes.index') }}" :active="request()->routeIs('requisicoes.*')">
@@ -73,7 +78,7 @@
                     </x-nav-link>
 
 
-                    
+
 
 
                     <div x-data="{ openCart: false }" class="relative inline-flex items-center">
